@@ -26,7 +26,12 @@ Quickly decode assets for RPG Maker MV, even if you don't have the key
 Features
 --------
 
-* TODO
+* Figures out the encoding key automatically if multiple png files can be found
+* Confidence level on the key found
+* Allows overriding the key on the command line
+* Fast
+* Small code base
+* Shows the top 10 keys found
 
 Credits
 -------
