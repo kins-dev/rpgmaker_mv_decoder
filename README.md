@@ -7,7 +7,7 @@ This has a handy feature, it will figure out (if possible) the key automatically
 Runs significantly faster than other solutions.
 
 ```bash
-python3 -m rpgmaker_mv_decoder source_path destination_path optional_key
+./decoder.py source_path destination_path optional_key 
 ```
 
 Still need to version this and do some work on it, but it is good enough for the moment

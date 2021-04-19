@@ -1,4 +1,5 @@
-"""Console script for rpgmaker_mv_decoder."""
+#!/usr/bin/env python3
+
 from rpgmaker_mv_decoder.utils import decode_files, guess_at_key
 import sys
 import click
