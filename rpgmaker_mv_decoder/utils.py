@@ -91,8 +91,8 @@ def decode_files(src, dst, key):
 
     (source,dest) = update_src_dest(PurePath(src), PurePath(dst))
 
-    click.echo('Reading from: %s' % click.format_filename(str(source)))
-    click.echo('Writing to: %s' % click.format_filename(str(dest)))
+    click.echo('Reading from: %s' % click.format_filename(str(source.joinpath(PurePath(src).relative_to(source)))))
+    click.echo('Writing to: %s' % click.format_filename(str(dest.joinpath(PurePath(src).relative_to(source)))))
 
     files=sorted(Path(src).glob('**/*.rpgmv[op]'))
 
