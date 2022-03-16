@@ -1,17 +1,20 @@
+#!/usr/bin/env python3
 """Main module."""
 import os
 from pathlib import Path, PurePath
+from xmlrpc.client import boolean
 from rpgmaker_mv_decoder.exceptions import FileFormatError
 import sys
 import click
 import struct
 import uuid
 import magic
-
+from binascii import crc32
 RPG_MAKER_MV_MAGIC = "5250474d560000000003010000000000"
 PNG_HEADER = "89504e470d0a1a0a0000000d49484452"
 OCT_STREAM = "application/octet-stream"
-
+IHDR_TEXT=b'IHDR'
+NOT_A_PNG="Invalid checksum"
 def int_xor(var, key):
     key = key[:len(var)]
     int_var = int.from_bytes(var, sys.byteorder)
@@ -19,10 +22,15 @@ def int_xor(var, key):
     int_enc = int_var ^ int_key
     return int_enc.to_bytes(len(var), sys.byteorder)
 
-def read_header_and_id(file_content, binary_key):
+def read_header_and_id(file_content, binary_key, guessing: boolean = False):
     (id, header) = struct.unpack("!16s16s", file_content[:32])
     if id.hex() != RPG_MAKER_MV_MAGIC:
-        raise FileFormatError('"%s" != "%s"' % (id.hex(), RPG_MAKER_MV_MAGIC), "First 16 bytes look wrong on this file")
+        raise FileFormatError(f'"{id.hex()}" != "{RPG_MAKER_MV_MAGIC}"', "First 16 bytes look wrong on this file")
+    if(guessing):
+        (ihdr_data, crc) = struct.unpack("!13s4s", file_content[32:49])
+        checksum = crc32(IHDR_TEXT + ihdr_data).to_bytes(4, 'big')
+        if (checksum != crc):
+            raise FileFormatError(NOT_A_PNG, "This file doesn't checksum correctly")
     return int_xor(binary_key,header)
 
 def get_likely_key(keys, count):
@@ -54,9 +62,10 @@ def guess_at_key(src):
         for filename in bar:
             with click.open_file(filename, 'rb') as file:
                 try:
-                    item = read_header_and_id(file.read(32), bKey).hex()
+                    item = read_header_and_id(file.read(49), bKey, True).hex()
                 except FileFormatError as ffe:
-                    click.echo(ffe.expression)
+                    if ffe.expression != NOT_A_PNG:
+                        click.echo(ffe.expression)
                     continue
                 count += 1
                 try:
@@ -86,7 +95,7 @@ def get_file_ext(data):
     return '.'+filetype.split('/')[-1]
 
 
-def decode_files(src, dst, key):
+def decode_files(src, dst, key, file_types):
     bKey = bytes.fromhex(key)
 
     (source,dest) = update_src_dest(PurePath(src), PurePath(dst))
@@ -107,13 +116,17 @@ def decode_files(src, dst, key):
                 except FileFormatError as ffe:
                     click.echo(ffe.expression)
                     continue
-
-            try:
-                outputFile = outputFile.with_suffix(get_file_ext(result))
-            except FileFormatError:
-                click.echo("Found octlet stream, key is probably incorrect, skipping %s" % click.format_filename(str(filename)))
-                continue
-
+            if(file_types):
+                try:
+                    outputFile = outputFile.with_suffix(get_file_ext(result))
+                except FileFormatError:
+                    click.echo("Found octlet stream, key is probably incorrect, skipping %s" % click.format_filename(str(filename)))
+                    continue
+            else:
+                if outputFile.suffix == ".rpgmvp":
+                    outputFile = outputFile.with_suffix(".png")
+                if outputFile.suffix == ".rpgmvo":
+                    outputFile = outputFile.with_suffix(".ogg")
             try:
                 os.makedirs(outputFile.parent)
             except FileExistsError:
