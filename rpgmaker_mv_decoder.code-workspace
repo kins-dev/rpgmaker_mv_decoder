@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"esbonio.server.enabled": true,
+		"esbonio.sphinx.confDir": "${workspaceFolder}/docs"
+	}
+}
