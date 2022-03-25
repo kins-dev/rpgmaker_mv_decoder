@@ -1,5 +1,5 @@
 Welcome to rpgmaker_mv_decoder's documentation!
-======================================
+===============================================
 
 .. toctree::
    :maxdepth: 2

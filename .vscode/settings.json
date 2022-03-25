@@ -1,9 +1,17 @@
 {
     "restructuredtext.confPath": "${workspaceFolder}/docs",
     "cSpell.words": [
+        "audreyr",
+        "howto",
+        "htbp",
         "IHDR",
+        "pypackage",
         "rpgmaker",
-        "rpgmv"
+        "rpgmv",
+        "rpgmvo",
+        "rpgmvp",
+        "toctree",
+        "todos"
     ],
     "esbonio.server.enabled": true,
     "esbonio.sphinx.confDir": "${workspaceFolder}/docs"
