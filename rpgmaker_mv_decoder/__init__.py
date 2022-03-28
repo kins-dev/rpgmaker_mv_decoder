@@ -1,4 +1,4 @@
-"""Top-level package for rpgmaker_mv_decoder."""
+"""Package for decoding RPGMaker MV/MZ encoded files"""
 
 __author__ = """Scott Atkins"""
 __email__ = 'scott@kins.dev'

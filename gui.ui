@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface version="1.2">
+  <object class="tk.Toplevel" id="Window">
+    <property name="padx">10</property>
+    <property name="pady">5</property>
+    <property name="title" translatable="yes">RPGMaker MV Decode</property>
+    <child>
+      <object class="ttk.Labelframe" id="frameSrc">
+        <property name="padding">5</property>
+        <property name="text" translatable="yes">Source Directory</property>
+        <layout manager="pack">
+          <property name="expand">true</property>
+          <property name="fill">x</property>
+          <property name="side">top</property>
+        </layout>
+        <child>
+          <object class="pygubu.builder.widgets.pathchooserinput" id="pathSrc">
+            <property name="mustexist">true</property>
+            <property name="title" translatable="yes">Source Directory</property>
+            <property name="type">directory</property>
+            <bind sequence="&lt;&lt;PathChooserPathChanged&gt;&gt;" handler="callbackPathSrc" add="" />
+            <layout manager="pack">
+              <property name="expand">true</property>
+              <property name="fill">x</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Labelframe" id="frameDst">
+        <property name="padding">5</property>
+        <property name="text" translatable="yes">Destination Directory</property>
+        <layout manager="pack">
+          <property name="expand">true</property>
+          <property name="fill">x</property>
+          <property name="side">top</property>
+        </layout>
+        <child>
+          <object class="pygubu.builder.widgets.pathchooserinput" id="pathDst">
+            <property name="mustexist">true</property>
+            <property name="title" translatable="yes">Destination Directory</property>
+            <property name="type">directory</property>
+            <bind sequence="&lt;&lt;PathChooserPathChanged&gt;&gt;" handler="callbackPathDst" add="" />
+            <layout manager="pack">
+              <property name="expand">true</property>
+              <property name="fill">x</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Labelframe" id="frameOpt">
+        <property name="padding">10</property>
+        <property name="text" translatable="yes">Options</property>
+        <layout manager="pack">
+          <property name="side">top</property>
+        </layout>
+        <containerlayout manager="grid">
+          <property type="col" id="1" name="minsize">10</property>
+        </containerlayout>
+        <child>
+          <object class="ttk.Checkbutton" id="checkboxDetectExt">
+            <property name="text" translatable="yes">Detect File Extensions</property>
+            <property name="underline">7</property>
+            <property name="variable">string:detectFileExt</property>
+            <layout manager="grid">
+              <property name="column">0</property>
+              <property name="columnspan">3</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="entryKey">
+            <property name="state">normal</property>
+            <property name="textvariable">string:gui_key</property>
+            <property name="validate">all</property>
+            <property name="validatecommand" type="command" cbtype="entry_validate" args="%P">checkText</property>
+            <property name="width">32</property>
+            <layout manager="grid">
+              <property name="column">0</property>
+              <property name="row">1</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="buttonDetect">
+            <property name="command" type="command" cbtype="simple">detect</property>
+            <property name="state">disabled</property>
+            <property name="text" translatable="yes">Detect Key</property>
+            <property name="underline">7</property>
+            <layout manager="grid">
+              <property name="column">2</property>
+              <property name="row">1</property>
+              <property name="sticky">e</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Frame" id="frameAction">
+        <layout manager="pack">
+          <property name="side">top</property>
+        </layout>
+        <child>
+          <object class="ttk.Button" id="buttonDecode">
+            <property name="command" type="command" cbtype="simple">decode</property>
+            <property name="state">disabled</property>
+            <property name="text" translatable="yes">Decode</property>
+            <property name="underline">0</property>
+            <layout manager="pack">
+              <property name="pady">5</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

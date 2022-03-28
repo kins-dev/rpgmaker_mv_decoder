@@ -6,7 +6,7 @@
 	],
 	"settings": {
 		"esbonio.server.enabled": true,
-		"esbonio.sphinx.confDir": "/home/bob/rpgmv/rpgmaker_mv_decoder/docs",
+		"esbonio.sphinx.confDir": "${workspaceFolder}/docs",
 		"cSpell.words": [
 			"howto",
 			"rpgmvp",

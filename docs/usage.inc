@@ -16,7 +16,7 @@
                      file contents.
 
     Options:
-      --find_types  Put an extension on the file extension based on the content.
-                    By default .rpgmvp becomes .png and .rpgmvo becomes .ogg
-                    regardless of the file contents.
-      --help        Show this message and exit.
+      --detect_type  Detect the file type and use the associated file extension.
+                     By default .rpgmvp becomes .png and .rpgmvo becomes .ogg
+                     regardless of the file contents.
+      --help         Show this message and exit.
