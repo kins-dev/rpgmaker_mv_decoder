@@ -53,7 +53,7 @@ class GuiApp:
         self.buttonDecode.configure(command=self.decode)
         self.frameAction.pack(side='top')
         self.Window.configure(padx='10', pady='5')
-        self.Window.title('RPGMaker MV Decode')
+        self.Window.title('RPGMaker MV Decoder')
 
         # Main widget
         self.mainwindow = self.Window
@@ -84,7 +84,6 @@ class GuiApp:
             int(data, 16)
             return True
         except ValueError:
-            print(f"bad value: {newText}")
             return False
 
     def detect(self):
@@ -98,7 +97,7 @@ class GuiApp:
     def decode(self):
         if(self.gui_key==''):
             self.detect()
-        decode_files(self.srcPath, self.dstPath, self.gui_key, self.detectFileExt.get() == '1')
+        decode_files(self.srcPath, self.dstPath, self.entryKey.get(), self.detectFileExt.get() == '1')
 
 
 if __name__ == '__main__':

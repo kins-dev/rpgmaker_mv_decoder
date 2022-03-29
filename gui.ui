@@ -3,7 +3,7 @@
   <object class="tk.Toplevel" id="Window">
     <property name="padx">10</property>
     <property name="pady">5</property>
-    <property name="title" translatable="yes">RPGMaker MV Decode</property>
+    <property name="title" translatable="yes">RPGMaker MV Decoder</property>
     <child>
       <object class="ttk.Labelframe" id="frameSrc">
         <property name="padding">5</property>
