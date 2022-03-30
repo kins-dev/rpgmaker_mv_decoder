@@ -2,7 +2,6 @@
 """Main module."""
 import os
 from pathlib import Path, PurePath
-import time
 from tkinter.ttk import Progressbar
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound, PNGHeaderError, RPGMakerHeaderError, FileFormatError
 from typing import Callable, Dict, List, Tuple
@@ -15,8 +14,9 @@ from binascii import crc32
 RPG_MAKER_MV_MAGIC = bytes.fromhex('5250474d560000000003010000000000')
 PNG_HEADER = "89504e470d0a1a0a0000000d49484452"
 OCT_STREAM = "application/octet-stream"
-IHDR_SECTION=b'IHDR'
-NOT_A_PNG="Invalid checksum"
+IHDR_SECTION = b'IHDR'
+NOT_A_PNG = "Invalid checksum"
+
 
 def __int_xor(var: bytes, key: bytes) -> bytes:
     """`int_xor` integer xor
@@ -35,6 +35,7 @@ def __int_xor(var: bytes, key: bytes) -> bytes:
     int_key: int = int.from_bytes(key, sys.byteorder)
     int_enc: int = int_var ^ int_key
     return int_enc.to_bytes(len(var), sys.byteorder)
+
 
 def read_header_and_decode(file_header: bytes, png_ihdr_data: bytes = None, key: str = PNG_HEADER) -> bytes:
     """`read_header_and_decode` take a RPGMaker header and return the key or the actual file header
@@ -60,7 +61,7 @@ def read_header_and_decode(file_header: bytes, png_ihdr_data: bytes = None, key:
     (id, header) = struct.unpack("!16s16s", file_header)
     if id != RPG_MAKER_MV_MAGIC:
         raise RPGMakerHeaderError(f'"{id.hex()}" != "{RPG_MAKER_MV_MAGIC.hex()}"',
-            "First 16 bytes of this file do not match the RPGMaker header, is this a RPGMaker file?")
+                                  "First 16 bytes of this file do not match the RPGMaker header, is this a RPGMaker file?")
     if(None != png_ihdr_data):
         ihdr_data: bytes
         crc: bytes
@@ -68,10 +69,11 @@ def read_header_and_decode(file_header: bytes, png_ihdr_data: bytes = None, key:
         checksum = crc32(IHDR_SECTION + ihdr_data).to_bytes(4, 'big')
         if (checksum != crc):
             raise PNGHeaderError(f"'{checksum.hex()}' != '{crc.hex()}'",
-                "This PNG's IHDR section doesn't checksum correctly, is this a PNG image?")
+                                 "This PNG's IHDR section doesn't checksum correctly, is this a PNG image?")
     return __int_xor(bytes.fromhex(key), header)
 
-def __print_possible_keys(sorted_keys: Dict[str, int], count:int) -> None:
+
+def __print_possible_keys(sorted_keys: Dict[str, int], count: int) -> None:
     """`__print_possible_keys` Prints a list (maximum 10) of keys for decoding
 
     Prints a list of possible keys for this project to the user, shows the confidence
@@ -84,9 +86,12 @@ def __print_possible_keys(sorted_keys: Dict[str, int], count:int) -> None:
     item: str = list(sorted_keys.keys())[0]
     ratio: float = sorted_keys[item]/(count - (len(sorted_keys) - 1))
     click.echo("%.2f%% confidence for images" % (((ratio)*100)))
-    click.echo(f"Possible keys: {item} used in {sorted_keys[item]} of {count} images")
+    click.echo(
+        f"Possible keys: {item} used in {sorted_keys[item]} of {count} images")
     for item in list(sorted_keys.keys())[1:10]:
-        click.echo(f"               {item} used in {sorted_keys[item]} of {count} images")
+        click.echo(
+            f"               {item} used in {sorted_keys[item]} of {count} images")
+
 
 def __get_likely_key(keys: Dict[str, int], count) -> str:
     """`__get_likely_key` Takes a list of keys and returns the most likely key
@@ -103,13 +108,15 @@ def __get_likely_key(keys: Dict[str, int], count) -> str:
     main_key: str = list(keys.keys())[0]
     if len(keys) != 1:
         # There's probably a better way...
-        sorted_keys = dict(sorted(keys.items(), key=lambda item: item[1], reverse=True))
-        main_key:bytes = list(sorted_keys.keys())[0]
+        sorted_keys = dict(
+            sorted(keys.items(), key=lambda item: item[1], reverse=True))
+        main_key: bytes = list(sorted_keys.keys())[0]
         __print_possible_keys(sorted_keys, len(keys), main_key, count)
 
     return main_key
 
-def guess_at_key(src: Path, pb_cb:Callable[[Progressbar], bool] = None) -> str:
+
+def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
     """`guess_at_key` Check the path for PNG images and return the decoding key
 
     Finds image files under the specified path and looks for a key to decode all the files.
@@ -117,7 +124,7 @@ def guess_at_key(src: Path, pb_cb:Callable[[Progressbar], bool] = None) -> str:
 
     Args:
     - `src` (`Path`): Path to search for .rpgmvp files
-    - `pb_cb` (`Callable[[Progressbar], bool]`, optional): Callback to display current progress. Sends `None` when bar is complete. Defaults to `None`.
+    - `pb_cb` (`Callable[[click._termui_impl.Progressbar], bool]`, optional): Callback to display current progress. Call with `None` when bar is complete. Returns `True` if the user has canceled the operation. Defaults to `None`.
 
     Raises:
     - `NoValidFilesFound`: If no valid PNG images are found
@@ -145,7 +152,8 @@ def guess_at_key(src: Path, pb_cb:Callable[[Progressbar], bool] = None) -> str:
             with click.open_file(filename, 'rb') as file:
                 item: bytes
                 try:
-                    item = read_header_and_decode(file.read(32), png_ihdr_data=file.read(17)).hex()
+                    item = read_header_and_decode(
+                        file.read(32), png_ihdr_data=file.read(17)).hex()
                 except RPGMakerHeaderError as e:
                     # This is not expected, so make sure the user knows
                     click.echo(e.message)
@@ -166,13 +174,15 @@ def guess_at_key(src: Path, pb_cb:Callable[[Progressbar], bool] = None) -> str:
 
     if skipped:
         percentage: float = (count * 100.0) / len(files)
-        click.echo(f"Calculated the same key for {count}/{len(files)} (%.2f%%) files" % percentage)
+        click.echo(
+            f"Calculated the same key for {count}/{len(files)} (%.2f%%) files" % percentage)
         click.echo(f"Using '{item}' as the key")
     if (0 == count):
         raise NoValidFilesFound(f"No png files found under: '{Path}'")
     return __get_likely_key(keys, count)
 
-def __update_src_dest(source: Path, destination:PurePath) -> Tuple[PurePath, PurePath]:
+
+def __update_src_dest(source: Path, destination: PurePath) -> Tuple[PurePath, PurePath]:
     """`__update_src_dest` Updates the source and destination paths
 
     Looks for the www and img directories, then uses that to generate the
@@ -196,8 +206,10 @@ def __update_src_dest(source: Path, destination:PurePath) -> Tuple[PurePath, Pur
     else:
         tmp_dir: UUID = uuid4()
         destination = destination.joinpath(str(tmp_dir))
-        click.echo(f"Unable to find 'www' or 'img' directly under '{source}', generating random project directory name")
+        click.echo(
+            f"Unable to find 'www' or 'img' directly under '{source}', generating random project directory name")
     return (PurePath(source), PurePath(destination))
+
 
 def get_file_ext(data: bytes) -> str:
     """`get_file_ext` Returns a file extension based on the file contents
@@ -215,11 +227,12 @@ def get_file_ext(data: bytes) -> str:
     """
     filetype = magic.from_buffer(data, mime=True)
     if filetype == OCT_STREAM:
-        raise FileFormatError('"%s" == "%s"' % (filetype, OCT_STREAM), "Found octlet stream, key is probably incorrect.")
+        raise FileFormatError('"%s" == "%s"' % (
+            filetype, OCT_STREAM), "Found octlet stream, key is probably incorrect.")
     return '.'+filetype.split('/')[-1]
 
 
-def decode_files(src: str, dst: str, key: str, detect_type: bool, pb_cb:Callable[[Progressbar], bool] = None) -> None:
+def decode_files(src: str, dst: str, key: str, detect_type: bool, pb_cb: Callable[[Progressbar], bool] = None) -> None:
     """`decode_files` Decodes the files
 
     Finds all rpgmvp and rpgmvo files and decodes them
@@ -229,7 +242,7 @@ def decode_files(src: str, dst: str, key: str, detect_type: bool, pb_cb:Callable
     - `dst` (`str`): Destination directory for output
     - `key` (`str`): Key to use for decoding
     - `detect_type` (`bool`): If file extensions should be detected from the file contents
-    - `pb_cb` (`Callable[[Progressbar], bool]`, optional): Callback to display current progress. Sends `None` when bar is complete. Defaults to `None`.
+    - `pb_cb` (`Callable[[click._termui_impl.Progressbar], bool]`, optional): Callback to display current progress. Call with `None` when bar is complete. Returns `True` if the user has canceled the operation. Defaults to `None`.
     """
     source_dir = Path(src).resolve()
     target_dir = Path(dst).resolve()
@@ -238,15 +251,16 @@ def decode_files(src: str, dst: str, key: str, detect_type: bool, pb_cb:Callable
     click.echo(f"Reading from: '{source}'")
     click.echo(f"Writing to:   '{destination}'")
 
-    files:List[Path] = sorted(source_dir.glob('**/*.rpgmv[op]'))
+    files: List[Path] = sorted(source_dir.glob('**/*.rpgmv[op]'))
 
     with click.progressbar(files, label="Decoding files") as bar:
-        filename:Path
+        filename: Path
         for filename in bar:
             if None != pb_cb:
                 if pb_cb(bar):
                     break
-            outputFile: PurePath = destination.joinpath(PurePath(filename).relative_to(source))
+            outputFile: PurePath = destination.joinpath(
+                PurePath(filename).relative_to(source))
             result: bytes
             with click.open_file(filename, 'rb') as file:
                 fileHeader: bytes = file.read(32)
@@ -260,7 +274,8 @@ def decode_files(src: str, dst: str, key: str, detect_type: bool, pb_cb:Callable
                 try:
                     outputFile = outputFile.with_suffix(get_file_ext(result))
                 except FileFormatError:
-                    click.echo("Found octlet stream, key is probably incorrect, skipping %s" % click.format_filename(str(filename)))
+                    click.echo("Found octlet stream, key is probably incorrect, skipping %s" %
+                               click.format_filename(str(filename)))
                     continue
             else:
                 if outputFile.suffix == ".rpgmvp":

@@ -1,9 +1,7 @@
 import pathlib
 import threading
-import time
 import tkinter as tk
 import tkinter.ttk as ttk
-import click
 from click._termui_impl import ProgressBar
 from pygubu.widgets.pathchooserinput import PathChooserInput
 from pygubu.widgets.dialog import Dialog
@@ -47,6 +45,7 @@ class DialogUI(Dialog):
         self.toplevel.rowconfigure('5', minsize='10')
         self.pb_valid: bool = False
         self.is_canceled: bool = False
+
         def disableEvent():
             pass
         self.toplevel.protocol("WM_DELETE_WINDOW", disableEvent)
@@ -262,10 +261,10 @@ class GuiApp:
 
         def decodeFiles():
             decode_files(self.srcPath,
-                            self.dstPath,
-                            self.entryKey.get(),
-                            self.detectFileExt.get() == '1',
-                            self.dialog.set_progress)
+                         self.dstPath,
+                         self.entryKey.get(),
+                         self.detectFileExt.get() == '1',
+                         self.dialog.set_progress)
             self.hide_dialog()
             self.setButtonState()
         threading.Thread(target=decodeFiles).start()
