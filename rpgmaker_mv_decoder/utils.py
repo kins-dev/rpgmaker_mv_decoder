@@ -2,8 +2,10 @@
 """Main module."""
 import os
 from pathlib import Path, PurePath
+import time
+from tkinter.ttk import Progressbar
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound, PNGHeaderError, RPGMakerHeaderError, FileFormatError
-from typing import Dict, List, Tuple
+from typing import Callable, Dict, List, Tuple
 import sys
 import click
 import struct
@@ -107,7 +109,7 @@ def __get_likely_key(keys: Dict[str, int], count) -> str:
 
     return main_key
 
-def guess_at_key(src: Path) -> str:
+def guess_at_key(src: Path, pb_cb:Callable[[Progressbar], bool] = None) -> str:
     """`guess_at_key` Check the path for PNG images and return the decoding key
 
     Finds image files under the specified path and looks for a key to decode all the files.
@@ -115,9 +117,9 @@ def guess_at_key(src: Path) -> str:
 
     Args:
     - `src` (`Path`): Path to search for .rpgmvp files
+    - `pb_cb` (`Callable[[Progressbar], bool]`, optional): Callback to display current progress. Sends `None` when bar is complete. Defaults to `None`.
 
     Raises:
-    ``
     - `NoValidFilesFound`: If no valid PNG images are found
 
     Returns:
@@ -130,10 +132,12 @@ def guess_at_key(src: Path) -> str:
     skipped: bool = False
     if min_found < 10:
         min_found = 10
-
     with click.progressbar(files, label="Finding key") as all_files:
         filename: Path
         for filename in all_files:
+            if None != pb_cb:
+                if pb_cb(all_files):
+                    break
             if skipped or (count >= min_found and keys[item] == count):
                 skipped = True
                 # move the progress bar to 100%
@@ -156,6 +160,9 @@ def guess_at_key(src: Path) -> str:
                     keys[item] += 1
                 except KeyError:
                     keys[item] = 1
+
+    if None != pb_cb:
+        pb_cb(None)
 
     if skipped:
         percentage: float = (count * 100.0) / len(files)
@@ -201,7 +208,6 @@ def get_file_ext(data: bytes) -> str:
     - `data` (`bytes`): File data
 
     Raises:
-    ``
     - `FileFormatError`: Error if the file type is unknown
 
     Returns:
@@ -213,7 +219,7 @@ def get_file_ext(data: bytes) -> str:
     return '.'+filetype.split('/')[-1]
 
 
-def decode_files(src: str, dst: str, key: str, detect_type: bool) -> None:
+def decode_files(src: str, dst: str, key: str, detect_type: bool, pb_cb:Callable[[Progressbar], bool] = None) -> None:
     """`decode_files` Decodes the files
 
     Finds all rpgmvp and rpgmvo files and decodes them
@@ -223,6 +229,7 @@ def decode_files(src: str, dst: str, key: str, detect_type: bool) -> None:
     - `dst` (`str`): Destination directory for output
     - `key` (`str`): Key to use for decoding
     - `detect_type` (`bool`): If file extensions should be detected from the file contents
+    - `pb_cb` (`Callable[[Progressbar], bool]`, optional): Callback to display current progress. Sends `None` when bar is complete. Defaults to `None`.
     """
     source_dir = Path(src).resolve()
     target_dir = Path(dst).resolve()
@@ -236,6 +243,9 @@ def decode_files(src: str, dst: str, key: str, detect_type: bool) -> None:
     with click.progressbar(files, label="Decoding files") as bar:
         filename:Path
         for filename in bar:
+            if None != pb_cb:
+                if pb_cb(bar):
+                    break
             outputFile: PurePath = destination.joinpath(PurePath(filename).relative_to(source))
             result: bytes
             with click.open_file(filename, 'rb') as file:
@@ -263,3 +273,5 @@ def decode_files(src: str, dst: str, key: str, detect_type: bool) -> None:
                 pass
             with open(outputFile, mode='wb') as file:
                 file.write(result)
+    if None != pb_cb:
+        pb_cb(None)

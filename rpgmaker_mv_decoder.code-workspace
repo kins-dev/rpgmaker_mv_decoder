@@ -9,6 +9,7 @@
 		"esbonio.sphinx.confDir": "${workspaceFolder}/docs",
 		"cSpell.words": [
 			"howto",
+			"pygubu",
 			"rpgmvp",
 			"toctree"
 		]
