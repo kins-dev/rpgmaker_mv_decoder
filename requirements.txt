@@ -1,4 +1,3 @@
 python-magic>=0.4.16
 Click>=7.0
 pygubu
-tkinter
