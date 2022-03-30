@@ -1,5 +1,7 @@
 # rpgmaker_mv_decoder v0.1.1
 
+[![Documentation Status](https://readthedocs.org/projects/rpgmaker-mv-decoder/badge/?version=latest)](https://rpgmaker-mv-decoder.readthedocs.io/en/latest/?version=latest)
+
 This is a python script for decoding RPG Maker MV/MZ game assets.
 
 This has a handy feature, it will figure out (if possible) the key automatically.
