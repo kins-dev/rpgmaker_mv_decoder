@@ -6,8 +6,11 @@ This has a handy feature, it will figure out (if possible) the key automatically
 It will also use the file header info for creating the extension.
 If you know the key, you can pass it in.
 
+If you want you can use the [API](https://rpgmaker-mv-decoder.readthedocs.io) instead
+
 ## Features
 
+- GUI for those who need that
 - Fast
 - No key needed if there's any encoded png images
 - Can put proper file extensions on the decoded files
@@ -15,7 +18,11 @@ If you know the key, you can pass it in.
 ## Example usage
 
 ```bash
-./decoder.py source_path destination_path optional_key
+./decoder.py "<source path>" "<destination path>" ["<optional key>"]
+```
+
+```bash
+./gui.py
 ```
 
 ## Help
