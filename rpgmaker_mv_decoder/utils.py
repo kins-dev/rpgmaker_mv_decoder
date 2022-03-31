@@ -191,16 +191,22 @@ def _handle_files(pb_cb, keys, all_files) -> int:
                 # Just continue on, no need to tell the user
                 continue
             count += 1
-            try:
-                keys[item] += 1
-            except KeyError:
-                keys[item] = 1
+            _update_key_dict(keys, item)
     if skipped:
-        percentage: float = (count * 100.0) / len(all_files)
-        click.echo(
-            f"Calculated the same key for {count}/{len(all_files)} ({percentage}%) files")
-        click.echo(f"Using '{item}' as the key")
+        _report_results(all_files, count, item)
     return count
+
+def _update_key_dict(keys, item):
+    try:
+        keys[item] += 1
+    except KeyError:
+        keys[item] = 1
+
+def _report_results(all_files, count, item):
+    percentage: float = (count * 100.0) / len(all_files)
+    click.echo(
+            f"Calculated the same key for {count}/{len(all_files)} ({percentage}%) files")
+    click.echo(f"Using '{item}' as the key")
 
 
 def __update_src_dest(source: Path, destination: PurePath) -> Tuple[PurePath, PurePath]:
