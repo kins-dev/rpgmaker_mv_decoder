@@ -1,9 +1,0 @@
-
-dist: focal
-language: python
-python:
-  - "3.10"
-install:
-  - pip3 install -r install/requirements.txt
-script:
-  - python3 decode.py --help
