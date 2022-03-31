@@ -28,7 +28,7 @@ class TestDecode(unittest.TestCase):
         runner = CliRunner()
         result = runner.invoke(main)
         assert result.exit_code == 2
-        assert 'rpgmaker_mv_decoder.cli.main' in result.output
+        assert 'Usage: main' in result.output
         help_result = runner.invoke(main, ['--help'])
         assert help_result.exit_code == 0
-        assert '--help  Show this message and exit.' in help_result.output
+        assert '--help         Show this message and exit.' in help_result.output
