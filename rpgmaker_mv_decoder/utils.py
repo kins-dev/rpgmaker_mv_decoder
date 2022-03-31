@@ -196,11 +196,13 @@ def _handle_files(pb_cb, keys, all_files) -> int:
         _report_results(all_files, count, item)
     return count
 
+
 def _update_key_dict(keys, item):
     try:
         keys[item] += 1
     except KeyError:
         keys[item] = 1
+
 
 def _report_results(all_files, count, item):
     percentage: float = (count * 100.0) / len(all_files)
