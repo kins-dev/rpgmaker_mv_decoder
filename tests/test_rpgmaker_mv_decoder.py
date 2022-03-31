@@ -23,6 +23,8 @@ class TestDecode(unittest.TestCase):
 
     def test_command_line_interface(self):
         """Test the CLI."""
+        if self is None:
+            return
         runner = CliRunner()
         result = runner.invoke(main)
         assert result.exit_code == 0

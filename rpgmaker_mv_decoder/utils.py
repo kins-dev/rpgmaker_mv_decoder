@@ -99,7 +99,7 @@ def __print_possible_keys(sorted_keys: Dict[str, int], count: int) -> None:
     """
     item: str = list(sorted_keys.keys())[0]
     ratio: float = sorted_keys[item]/(count - (len(sorted_keys) - 1))
-    click.echo("%.2f%% confidence for images" % (((ratio)*100)))
+    click.echo(f"{ratio*100:.2f}% confidence for images")
     click.echo(
         f"Possible keys: {item} used in {sorted_keys[item]} of {count} images")
     for item in list(sorted_keys.keys())[1:10]:
@@ -153,10 +153,8 @@ def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
     files: List[Path] = sorted(Path(src).glob('**/*.rpgmvp'))
     keys: Dict[str, int] = {}
     count: int = 0
-    min_found: int = len(files) / 20
+    min_found: int = max(10, len(files) // 20)
     skipped: bool = False
-    if min_found < 10:
-        min_found = 10
     with click.progressbar(files, label="Finding key") as all_files:
         filename: Path
         for filename in all_files:
@@ -249,8 +247,8 @@ def get_file_ext(data: bytes) -> str:
     """
     filetype = magic.from_buffer(data, mime=True)
     if filetype == OCT_STREAM:
-        raise FileFormatError('"%s" == "%s"' % (
-            filetype, OCT_STREAM), "Found octlet stream, key is probably incorrect.")
+        raise FileFormatError(f'"{filetype}" == "{OCT_STREAM}"',
+                              "Found octlet stream, key is probably incorrect.")
     return '.'+filetype.split('/')[-1]
 
 
@@ -272,6 +270,7 @@ def decode_files(src: str,
     display current progress. Call with `None` when bar is complete. Returns `True` if the\
     user has canceled the operation. Defaults to `None`.
     """
+    # pylint: disable=too-many-locals
     source_dir = Path(src).resolve()
     target_dir = Path(dst).resolve()
     (source, destination) = __update_src_dest(source_dir, target_dir)
@@ -302,8 +301,8 @@ def decode_files(src: str,
                 try:
                     output_file = output_file.with_suffix(get_file_ext(result))
                 except FileFormatError:
-                    click.echo("Found octlet stream, key is probably incorrect, skipping %s" %
-                               click.format_filename(str(filename)))
+                    click.echo("Found octlet stream, key is probably incorrect, "\
+                               f"skipping {click.format_filename(str(filename))}")
                     continue
             else:
                 if output_file.suffix == ".rpgmvp":

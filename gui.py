@@ -3,22 +3,48 @@
 import pathlib
 import threading
 import tkinter as tk
-import tkinter.ttk as ttk
+from tkinter import ttk
 
 from click._termui_impl import ProgressBar
 from pygubu.widgets.dialog import Dialog
 from pygubu.widgets.pathchooserinput import PathChooserInput
-from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
 
+from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
 from rpgmaker_mv_decoder.utils import decode_files, guess_at_key
 
 PROJECT_PATH = pathlib.Path(__file__).parent
 PROJECT_UI = PROJECT_PATH / "gui.ui"
 
+def _format_eta(click_pb: ProgressBar) -> str:
+    if click_pb.eta_known:
+        time: int = int(click_pb.eta)
+        seconds = time % 60
+        time //= 60
+        if time <= 0:
+            return f"ETA: {seconds} s"
+        minutes = time % 60
+        time //= 60
+        if time <= 0:
+            return f"ETA: {minutes:02}:{seconds:02}"
+        hours = time % 24
+        time //= 24
+        if time <= 0:
+            return f"ETA: {hours:02}:{minutes:02}:{seconds:02}"
+        return f"ETA: {time}d {hours:02}:{minutes:02}:{seconds:02}"
+    return ""
 
+def _validate_text(new_text: str) -> bool:
+    data = new_text.replace(" ", "")
+    if data == "":
+        return True
+    try:
+        int(data, 16)
+        return True
+    except ValueError:
+        return False
 class _DialogUI(Dialog):
     """`DialogUI` Dialog box showing progress"""
-
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, parent):
         Dialog.__init__(self, parent, modal=True)
         self.pb_valid: bool = False
@@ -104,23 +130,7 @@ class _DialogUI(Dialog):
         self.is_canceled = False
         self._show_progress()
 
-    def _format_eta(self, click_pb: ProgressBar) -> str:
-        if click_pb.eta_known:
-            time: int = int(click_pb.eta)
-            seconds = time % 60
-            time //= 60
-            if time <= 0:
-                return f"ETA: {seconds} s"
-            minutes = time % 60
-            time //= 60
-            if time <= 0:
-                return f"ETA: {minutes:02}:{seconds:02}"
-            hours = time % 24
-            time //= 24
-            if time <= 0:
-                return f"ETA: {hours:02}:{minutes:02}:{seconds:02}"
-            return f"ETA: {time}d {hours:02}:{minutes:02}:{seconds:02}"
-        return ""
+
 
     def set_progress(self, click_pb: ProgressBar = None) -> bool:
         """`set_progress` updates the progress bar and labels for the progress dialog
@@ -145,12 +155,13 @@ class _DialogUI(Dialog):
             self.pos = click_pb.pos
             self.max = click_pb.length
             self.pct = click_pb.pct * 100
-            self.eta = self._format_eta(click_pb)
+            self.eta = _format_eta(click_pb)
         self._show_progress()
         return self.is_canceled
 
 
 class _GuiApp:
+    # pylint: disable=too-many-instance-attributes,too-few-public-methods
     def __init__(self, master=None):
         # build ui
         self.window = tk.Tk() if master is None else tk.Toplevel(master)
@@ -184,7 +195,7 @@ class _GuiApp:
         self.entry_key.configure(
             state='normal', textvariable=self.gui_key, validate='all', width='32')
         self.entry_key.grid(column='0', row='1', sticky='w')
-        _validatecmd = (self.entry_key.register(self._validate_text), '%P')
+        _validatecmd = (self.entry_key.register(_validate_text), '%P')
         self.entry_key.configure(validatecommand=_validatecmd)
         self.button_detect = ttk.Button(self.frame_opt)
         self.button_detect.configure(
@@ -237,15 +248,6 @@ class _GuiApp:
         self.dst_path = self.path_dst.entry.get()
         self._set_button_state()
 
-    def _validate_text(self, new_text: str) -> bool:
-        data = new_text.replace(" ", "")
-        if data == "":
-            return True
-        try:
-            int(data, 16)
-            return True
-        except ValueError:
-            return False
 
     def _show_dialog(self, title: str, text: str):
         self.dialog_shown = True
