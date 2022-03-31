@@ -15,6 +15,7 @@ from rpgmaker_mv_decoder.utils import decode_files, guess_at_key
 PROJECT_PATH = pathlib.Path(__file__).parent
 PROJECT_UI = PROJECT_PATH / "gui.ui"
 
+
 def _format_eta(click_pb: ProgressBar) -> str:
     if click_pb.eta_known:
         time: int = int(click_pb.eta)
@@ -33,6 +34,7 @@ def _format_eta(click_pb: ProgressBar) -> str:
         return f"ETA: {time}d {hours:02}:{minutes:02}:{seconds:02}"
     return ""
 
+
 def _validate_text(new_text: str) -> bool:
     data = new_text.replace(" ", "")
     if data == "":
@@ -42,9 +44,12 @@ def _validate_text(new_text: str) -> bool:
         return True
     except ValueError:
         return False
+
+
 class _DialogUI(Dialog):
     """`DialogUI` Dialog box showing progress"""
     # pylint: disable=too-many-instance-attributes
+
     def __init__(self, parent):
         Dialog.__init__(self, parent, modal=True)
         self.pb_valid: bool = False
@@ -129,8 +134,6 @@ class _DialogUI(Dialog):
         self.pb_valid = False
         self.is_canceled = False
         self._show_progress()
-
-
 
     def set_progress(self, click_pb: ProgressBar = None) -> bool:
         """`set_progress` updates the progress bar and labels for the progress dialog
@@ -247,7 +250,6 @@ class _GuiApp:
     def _callback_path_dst(self, _event=None):
         self.dst_path = self.path_dst.entry.get()
         self._set_button_state()
-
 
     def _show_dialog(self, title: str, text: str):
         self.dialog_shown = True

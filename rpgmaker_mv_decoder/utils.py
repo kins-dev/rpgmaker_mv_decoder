@@ -72,7 +72,7 @@ def read_header_and_decode(file_header: bytes,
     (file_id, header) = struct.unpack("!16s16s", file_header)
     if file_id != RPG_MAKER_MV_MAGIC:
         raise RPGMakerHeaderError(f'"{file_id.hex()}" != "{RPG_MAKER_MV_MAGIC.hex()}"',
-                                  "First 16 bytes of this file do not match the RPGMaker header, "\
+                                  "First 16 bytes of this file do not match the RPGMaker header, "
                                   "is this a RPGMaker file?")
     if png_ihdr_data is not None:
         ihdr_data: bytes
@@ -81,7 +81,7 @@ def read_header_and_decode(file_header: bytes,
         checksum = crc32(IHDR_SECTION + ihdr_data).to_bytes(4, 'big')
         if checksum != crc:
             raise PNGHeaderError(f"'{checksum.hex()}' != '{crc.hex()}'",
-                                 "This PNG's IHDR section doesn't checksum correctly, "\
+                                 "This PNG's IHDR section doesn't checksum correctly, "
                                  "is this a PNG image?")
     return __int_xor(bytes.fromhex(key), header)
 
@@ -225,7 +225,7 @@ def __update_src_dest(source: Path, destination: PurePath) -> Tuple[PurePath, Pu
         tmp_dir: UUID = uuid4()
         destination = destination.joinpath(str(tmp_dir))
         click.echo(
-            f"Unable to find 'www' or 'img' directly under '{source}',"\
+            f"Unable to find 'www' or 'img' directly under '{source}',"
             " generating random project directory name")
     return (PurePath(source), PurePath(destination))
 
@@ -233,7 +233,8 @@ def __update_src_dest(source: Path, destination: PurePath) -> Tuple[PurePath, Pu
 def get_file_ext(data: bytes) -> str:
     """`get_file_ext` Returns a file extension based on the file contents
 
-    Uses libmagic to figure out the actual file type and place a proper extension on the file
+    Uses libmagic to figure out the actual file type and place a proper
+    extension on the file
 
     Args:
     - `data` (`bytes`): File data
@@ -301,19 +302,26 @@ def decode_files(src: str,
                 try:
                     output_file = output_file.with_suffix(get_file_ext(result))
                 except FileFormatError:
-                    click.echo("Found octlet stream, key is probably incorrect, "\
+                    click.echo("Found octlet stream, key is probably incorrect, "
                                f"skipping {click.format_filename(str(filename))}")
                     continue
             else:
-                if output_file.suffix == ".rpgmvp":
-                    output_file = output_file.with_suffix(".png")
-                if output_file.suffix == ".rpgmvo":
-                    output_file = output_file.with_suffix(".ogg")
-            try:
-                os.makedirs(output_file.parent)
-            except FileExistsError:
-                pass
-            with open(output_file, mode='wb') as file:
-                file.write(result)
+                output_file = _get_std_ext(output_file)
+            _save_file(output_file, result)
     if pb_cb is not None:
         pb_cb(None)
+
+def _get_std_ext(output_file):
+    if output_file.suffix == ".rpgmvp":
+        output_file = output_file.with_suffix(".png")
+    if output_file.suffix == ".rpgmvo":
+        output_file = output_file.with_suffix(".ogg")
+    return output_file
+
+def _save_file(output_file, result):
+    try:
+        os.makedirs(output_file.parent)
+    except FileExistsError:
+        pass
+    with open(output_file, mode='wb') as file:
+        file.write(result)

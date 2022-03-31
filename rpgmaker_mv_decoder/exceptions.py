@@ -1,10 +1,13 @@
 """Custom Exception Types"""
+
+
 class Error(Exception):
     """Base class for exceptions in this module.
 
     Attributes:
     - `message`: Explanation of the error
     """
+
     def __init__(self, message: str):
         """`__init__` constructor
 
@@ -13,6 +16,7 @@ class Error(Exception):
         """
         Exception.__init__(self)
         self.message: str = message
+
 
 class NoValidFilesFound(Error):
     """Exception raised when no files are found. Based on `Error` class
@@ -42,13 +46,16 @@ class FileFormatError(Error):
         self.expression: str = expression
         Error.__init__(self, message)
 
+
 class PNGHeaderError(FileFormatError):
-    """Exception raised for PNG images that when the IHDR section doesn't checksum correctly.
+    """Exception raised for PNG images that when the IHDR section doesn't
+    checksum correctly.
 
     Attributes:
     - `expression` -- Input expression in which the error occurred
     - `message` -- Explanation of the error
     """
+
 
 class RPGMakerHeaderError(FileFormatError):
     """Exception raised for files missing the RPGMaker MV header.

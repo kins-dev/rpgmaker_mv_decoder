@@ -43,6 +43,8 @@ TYPE_HELP = "Detect the file type and use the associated file extension. "\
     "of the file contents."
 
 CMD_HELP = "Decodes RPGMaker files under <Source> directory to <Destination> directory."
+
+
 @click.command(cls=CmdHelp, help=CMD_HELP)
 @click.argument('source',
                 type=click.Path(exists=True, file_okay=False,
