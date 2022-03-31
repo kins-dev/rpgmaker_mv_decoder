@@ -39,8 +39,8 @@ Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
 rpgmaker_mv_decoder could always use more documentation, whether as part of the
-official rpgmaker_mv_decoder docs, in docstrings, or even on the web in blog posts,
-articles, and such.
+official rpgmaker_mv_decoder docs, in docstrings, or even on the web in blog
+posts, articles, and such.
 
 Submit Feedback
 ~~~~~~~~~~~~~~~
@@ -57,7 +57,8 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `rpgmaker_mv_decoder` for local development.
+Ready to contribute? Here's how to set up `rpgmaker_mv_decoder` for local
+development.
 
 1. Fork the `rpgmaker_mv_decoder` repo on GitHub.
 2. Clone your fork locally::
@@ -102,8 +103,8 @@ Before you submit a pull request, check that it meets these guidelines:
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
-3. The pull request should work for Python 3.5, 3.6, 3.7 and 3.8, and for PyPy. Check
-   https://travis-ci.com/kins-dev/rpgmaker_mv_decoder/pull_requests
+3. The pull request should work for Python 3.6, 3.7, 3.8, 3.9 and 3.10, and
+   for PyPy. Check https://travis-ci.com/kins-dev/rpgmaker_mv_decoder/pull_requests
    and make sure that the tests pass for all supported Python versions.
 
 Tips
