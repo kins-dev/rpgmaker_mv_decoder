@@ -6,8 +6,9 @@ rpgmaker_mv_decoder
 .. image:: https://img.shields.io/pypi/v/rpgmaker_mv_decoder.svg
         :target: https://pypi.python.org/pypi/rpgmaker_mv_decoder
 
-.. image:: https://img.shields.io/travis/kins-dev/rpgmaker_mv_decoder.svg
-        :target: https://travis-ci.com/kins-dev/rpgmaker_mv_decoder
+.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Python%20application
+        :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-app.yml
+        :alt: GitHub Workflow Status
 
 .. image:: https://readthedocs.org/projects/rpgmaker-mv-decoder/badge/?version=latest
         :target: https://rpgmaker-mv-decoder.readthedocs.io/en/latest/?version=latest
