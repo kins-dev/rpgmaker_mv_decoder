@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
 """Main module."""
 import os
+import struct
+import sys
+from binascii import crc32
 from pathlib import Path, PurePath
 from tkinter.ttk import Progressbar
-from rpgmaker_mv_decoder.exceptions import NoValidFilesFound, PNGHeaderError, RPGMakerHeaderError, FileFormatError
 from typing import Callable, Dict, List, Tuple
-import sys
-import click
-import struct
 from uuid import UUID, uuid4
+
+import click
 import magic
-from binascii import crc32
+
+from rpgmaker_mv_decoder.exceptions import (FileFormatError, NoValidFilesFound,
+                                            PNGHeaderError,
+                                            RPGMakerHeaderError)
+
 RPG_MAKER_MV_MAGIC = bytes.fromhex('5250474d560000000003010000000000')
 PNG_HEADER = "89504e470d0a1a0a0000000d49484452"
 OCT_STREAM = "application/octet-stream"

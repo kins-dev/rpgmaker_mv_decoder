@@ -2,9 +2,10 @@ import pathlib
 import threading
 import tkinter as tk
 import tkinter.ttk as ttk
+
 from click._termui_impl import ProgressBar
-from pygubu.widgets.pathchooserinput import PathChooserInput
 from pygubu.widgets.dialog import Dialog
+from pygubu.widgets.pathchooserinput import PathChooserInput
 
 from rpgmaker_mv_decoder.utils import decode_files, guess_at_key
 
