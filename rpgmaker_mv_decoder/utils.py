@@ -152,50 +152,55 @@ def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
     """
     files: List[Path] = sorted(Path(src).glob('**/*.rpgmvp'))
     keys: Dict[str, int] = {}
-    count: int = 0
-    min_found: int = max(10, len(files) // 20)
-    skipped: bool = False
+    count: int
     with click.progressbar(files, label="Finding key") as all_files:
-        filename: Path
-        for filename in all_files:
-            item: bytes = None
-            if pb_cb is not None:
-                if pb_cb(all_files):
-                    break
-            if skipped or (count >= min_found and item is not None and keys[item] == count):
-                skipped = True
-                # move the progress bar to 100%
-                continue
-            with click.open_file(filename, 'rb') as file:
-                try:
-                    item = read_header_and_decode(
-                        file.read(32), png_ihdr_data=file.read(17)).hex()
-                except RPGMakerHeaderError as exception:
-                    # This is not expected, so make sure the user knows
-                    click.echo(exception.message)
-                    click.echo(exception.expression)
-                    continue
-                except PNGHeaderError:
-                    # Expect this to happen if the file is not a png (eg. webp)
-                    # Just continue on, no need to tell the user
-                    continue
-                count += 1
-                try:
-                    keys[item] += 1
-                except KeyError:
-                    keys[item] = 1
-
+        count = _handle_files(pb_cb, keys, all_files)
     if pb_cb is not None:
         pb_cb(None)
 
-    if skipped:
-        percentage: float = (count * 100.0) / len(files)
-        click.echo(
-            f"Calculated the same key for {count}/{len(files)} (%.2f%%) files" % percentage)
-        click.echo(f"Using '{item}' as the key")
     if count == 0:
         raise NoValidFilesFound(f"No png files found under: '{Path}'")
     return __get_likely_key(keys, count)
+
+
+def _handle_files(pb_cb, keys, all_files) -> int:
+    skipped: bool = False
+    min_found: int = max(10, len(all_files) // 20)
+    filename: Path
+    count: int = 0
+    item: bytes = None
+    for filename in all_files:
+        if pb_cb is not None:
+            if pb_cb(all_files):
+                break
+        if skipped or (count >= min_found and item is not None and keys[item] == count):
+            skipped = True
+            # move the progress bar to 100%
+            continue
+        with click.open_file(filename, 'rb') as file:
+            try:
+                item = read_header_and_decode(file.read(32),
+                                              png_ihdr_data=file.read(17)).hex()
+            except RPGMakerHeaderError as exception:
+                # This is not expected, so make sure the user knows
+                click.echo(exception.message)
+                click.echo(exception.expression)
+                continue
+            except PNGHeaderError:
+                # Expect this to happen if the file is not a png (eg. webp)
+                # Just continue on, no need to tell the user
+                continue
+            count += 1
+            try:
+                keys[item] += 1
+            except KeyError:
+                keys[item] = 1
+    if skipped:
+        percentage: float = (count * 100.0) / len(all_files)
+        click.echo(
+            f"Calculated the same key for {count}/{len(all_files)} ({percentage}%) files")
+        click.echo(f"Using '{item}' as the key")
+    return count
 
 
 def __update_src_dest(source: Path, destination: PurePath) -> Tuple[PurePath, PurePath]:
@@ -311,12 +316,14 @@ def decode_files(src: str,
     if pb_cb is not None:
         pb_cb(None)
 
+
 def _get_std_ext(output_file):
     if output_file.suffix == ".rpgmvp":
         output_file = output_file.with_suffix(".png")
     if output_file.suffix == ".rpgmvo":
         output_file = output_file.with_suffix(".ogg")
     return output_file
+
 
 def _save_file(output_file, result):
     try:
