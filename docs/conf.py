@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+"""documentation config file"""
 #
 # rpgmaker_mv_decoder documentation build configuration file, created by
 # sphinx-quickstart on Fri Jun  9 13:47:02 2017.
@@ -12,16 +13,23 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+import os
+import sys
+from typing import List
+
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory is
 # relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
 #
-import os
-import sys
+import commonmark
+from sphinx.application import Sphinx
 sys.path.insert(0, os.path.abspath('..'))
-
+# pylint: disable=wrong-import-position
 import rpgmaker_mv_decoder
+
+
+# pylint: disable=invalid-name
 
 # -- General configuration ---------------------------------------------
 
@@ -47,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'rpgmaker_mv_decoder'
-copyright = "2021, Scott Atkins"
+project_copyright = "2021, Scott Atkins"
 author = "Scott Atkins"
 
 # The version info for the project you're documenting, acts as replacement
@@ -159,15 +167,20 @@ texinfo_documents = [
 ]
 
 
-
-import commonmark
-
-def docstring(app, what, name, obj, options, lines):
-    md  = '\n'.join(lines)
-    ast = commonmark.Parser().parse(md)
+def _docstring(_app, _what, _name, _obj, _options, lines: List[str]) -> None:
+    markdown: str = '\n'.join(lines)
+    ast = commonmark.Parser().parse(markdown)
     rst = commonmark.ReStructuredTextRenderer().render(ast)
     lines.clear()
     lines += rst.splitlines()
 
-def setup(app):
-    app.connect('autodoc-process-docstring', docstring)
+
+def setup(app: Sphinx) -> None:
+    """`setup` function for setting up docstring to sphinx
+
+    Used to handle markdown in docstrings
+
+    Args:
+    - `app` (`Sphinx`): Sphinx application
+    """
+    app.connect('autodoc-process-docstring', _docstring)

@@ -6,11 +6,10 @@
 import unittest
 from click.testing import CliRunner
 
-from rpgmaker_mv_decoder import rpgmaker_mv_decoder
-from rpgmaker_mv_decoder import cli
+from decode import main
 
 
-class TestRpgmaker_mv_decoder(unittest.TestCase):
+class TestDecode(unittest.TestCase):
     """Tests for `rpgmaker_mv_decoder` package."""
 
     def setUp(self):
@@ -25,9 +24,9 @@ class TestRpgmaker_mv_decoder(unittest.TestCase):
     def test_command_line_interface(self):
         """Test the CLI."""
         runner = CliRunner()
-        result = runner.invoke(cli.main)
+        result = runner.invoke(main)
         assert result.exit_code == 0
         assert 'rpgmaker_mv_decoder.cli.main' in result.output
-        help_result = runner.invoke(cli.main, ['--help'])
+        help_result = runner.invoke(main, ['--help'])
         assert help_result.exit_code == 0
         assert '--help  Show this message and exit.' in help_result.output

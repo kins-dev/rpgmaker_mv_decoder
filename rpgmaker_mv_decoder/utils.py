@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Main module."""
+"""Utility functions"""
 import os
 import struct
 import sys
@@ -34,6 +34,7 @@ def __int_xor(var: bytes, key: bytes) -> bytes:
 
     Returns:
     - `bytes`: XOR of input 1 and input 2
+
     """
     key = key[:len(var)]
     int_var: int = int.from_bytes(var, sys.byteorder)
@@ -42,15 +43,18 @@ def __int_xor(var: bytes, key: bytes) -> bytes:
     return int_enc.to_bytes(len(var), sys.byteorder)
 
 
-def read_header_and_decode(file_header: bytes, png_ihdr_data: bytes = None, key: str = PNG_HEADER) -> bytes:
+def read_header_and_decode(file_header: bytes,
+                           png_ihdr_data: bytes = None,
+                           key: str = PNG_HEADER) -> bytes:
     """`read_header_and_decode` take a RPGMaker header and return the key or the actual file header
 
-    Check's the first 16 bytes for the standard RPGMaker header, then drops them. Takes the next 16 bytes
-    and either calculates the key based on a PNG image, or uses the specify key to decode. If png_ihdr_data
-    is provided, checks that the IHDR section checksums correctly.
+    Check's the first 16 bytes for the standard RPGMaker header, then drops them. Takes the next 16
+    bytes and either calculates the key based on a PNG image, or uses the specify key to decode. If
+    png_ihdr_data is provided, checks that the IHDR section checksums correctly.
 
     Args:
-    - `file_header` (`bytes`): First 32 bytes from the file, 16 bytes are the RPGMaker header, followed by 16 bytes of the file header
+    - `file_header` (`bytes`): First 32 bytes from the file, 16 bytes are the RPGMaker header,\
+    followed by 16 bytes of the file header
     - `png_ihdr_data` (`bytes`): Next 17 bytes for a PNG image to check the IHDR section
     - `key` (`str`): Key to use for xor, defaults to a standard PNG header if left unspecified
 
@@ -59,22 +63,26 @@ def read_header_and_decode(file_header: bytes, png_ihdr_data: bytes = None, key:
     - `PNGHeaderError`: The PNG's IHDR section doesn't checksum correctly
 
     Returns:
-    - `bytes`: If key was None, the key needed for a PNG image header, otherwise the decoded file header.
+    - `bytes`: If key was None, the key needed for a PNG image header, otherwise the decoded\
+    file header.
+
     """
-    id: bytes
+    file_id: bytes
     header: bytes
-    (id, header) = struct.unpack("!16s16s", file_header)
-    if id != RPG_MAKER_MV_MAGIC:
-        raise RPGMakerHeaderError(f'"{id.hex()}" != "{RPG_MAKER_MV_MAGIC.hex()}"',
-                                  "First 16 bytes of this file do not match the RPGMaker header, is this a RPGMaker file?")
-    if(None != png_ihdr_data):
+    (file_id, header) = struct.unpack("!16s16s", file_header)
+    if file_id != RPG_MAKER_MV_MAGIC:
+        raise RPGMakerHeaderError(f'"{file_id.hex()}" != "{RPG_MAKER_MV_MAGIC.hex()}"',
+                                  "First 16 bytes of this file do not match the RPGMaker header, "\
+                                  "is this a RPGMaker file?")
+    if png_ihdr_data is not None:
         ihdr_data: bytes
         crc: bytes
         (ihdr_data, crc) = struct.unpack("!13s4s", png_ihdr_data)
         checksum = crc32(IHDR_SECTION + ihdr_data).to_bytes(4, 'big')
-        if (checksum != crc):
+        if checksum != crc:
             raise PNGHeaderError(f"'{checksum.hex()}' != '{crc.hex()}'",
-                                 "This PNG's IHDR section doesn't checksum correctly, is this a PNG image?")
+                                 "This PNG's IHDR section doesn't checksum correctly, "\
+                                 "is this a PNG image?")
     return __int_xor(bytes.fromhex(key), header)
 
 
@@ -87,6 +95,7 @@ def __print_possible_keys(sorted_keys: Dict[str, int], count: int) -> None:
     Args:
     - `sorted_keys` (`Dict[str, int]`): Keys sorted by frequency
     - `count` (`int`): Total number of files checked
+
     """
     item: str = list(sorted_keys.keys())[0]
     ratio: float = sorted_keys[item]/(count - (len(sorted_keys) - 1))
@@ -109,6 +118,7 @@ def __get_likely_key(keys: Dict[str, int], count) -> str:
 
     Returns:
     - `str`: Key to use for decoding
+
     """
     main_key: str = list(keys.keys())[0]
     if len(keys) != 1:
@@ -116,7 +126,7 @@ def __get_likely_key(keys: Dict[str, int], count) -> str:
         sorted_keys = dict(
             sorted(keys.items(), key=lambda item: item[1], reverse=True))
         main_key: bytes = list(sorted_keys.keys())[0]
-        __print_possible_keys(sorted_keys, len(keys), main_key, count)
+        __print_possible_keys(sorted_keys, count)
 
     return main_key
 
@@ -129,13 +139,16 @@ def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
 
     Args:
     - `src` (`Path`): Path to search for .rpgmvp files
-    - `pb_cb` (`Callable[[click._termui_impl.Progressbar], bool]`, optional): Callback to display current progress. Call with `None` when bar is complete. Returns `True` if the user has canceled the operation. Defaults to `None`.
+    - `pb_cb` (`Callable[[click._termui_impl.Progressbar], bool]`, optional): Callback to\
+    display current progress. Call with `None` when bar is complete. Returns `True` if the\
+    user has canceled the operation. Defaults to `None`.
 
     Raises:
     - `NoValidFilesFound`: If no valid PNG images are found
 
     Returns:
     - `str`: Decoding key
+
     """
     files: List[Path] = sorted(Path(src).glob('**/*.rpgmvp'))
     keys: Dict[str, int] = {}
@@ -147,7 +160,7 @@ def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
     with click.progressbar(files, label="Finding key") as all_files:
         filename: Path
         for filename in all_files:
-            if None != pb_cb:
+            if pb_cb is not None:
                 if pb_cb(all_files):
                     break
             if skipped or (count >= min_found and keys[item] == count):
@@ -159,10 +172,10 @@ def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
                 try:
                     item = read_header_and_decode(
                         file.read(32), png_ihdr_data=file.read(17)).hex()
-                except RPGMakerHeaderError as e:
+                except RPGMakerHeaderError as exception:
                     # This is not expected, so make sure the user knows
-                    click.echo(e.message)
-                    click.echo(e.expression)
+                    click.echo(exception.message)
+                    click.echo(exception.expression)
                     continue
                 except PNGHeaderError:
                     # Expect this to happen if the file is not a png (eg. webp)
@@ -174,7 +187,7 @@ def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
                 except KeyError:
                     keys[item] = 1
 
-    if None != pb_cb:
+    if pb_cb is not None:
         pb_cb(None)
 
     if skipped:
@@ -182,7 +195,7 @@ def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
         click.echo(
             f"Calculated the same key for {count}/{len(files)} (%.2f%%) files" % percentage)
         click.echo(f"Using '{item}' as the key")
-    if (0 == count):
+    if count == 0:
         raise NoValidFilesFound(f"No png files found under: '{Path}'")
     return __get_likely_key(keys, count)
 
@@ -199,9 +212,11 @@ def __update_src_dest(source: Path, destination: PurePath) -> Tuple[PurePath, Pu
     - `destination` (`PurePath`): Parent directory for the decoded files
 
     Returns:
-    - `Tuple[PurePath, PurePath]`: Updated source and destination directories based on the filesystem
+    - `Tuple[PurePath, PurePath]`: Updated source and destination directories\
+    based on the filesystem
+
     """
-    if "www" == source.name:
+    if source.name == "www":
         source = source.parent
         destination = destination.joinpath(str(source.name))
     elif source.joinpath("img").exists():
@@ -212,7 +227,8 @@ def __update_src_dest(source: Path, destination: PurePath) -> Tuple[PurePath, Pu
         tmp_dir: UUID = uuid4()
         destination = destination.joinpath(str(tmp_dir))
         click.echo(
-            f"Unable to find 'www' or 'img' directly under '{source}', generating random project directory name")
+            f"Unable to find 'www' or 'img' directly under '{source}',"\
+            " generating random project directory name")
     return (PurePath(source), PurePath(destination))
 
 
@@ -229,6 +245,7 @@ def get_file_ext(data: bytes) -> str:
 
     Returns:
     - `str`: Extension for the file
+
     """
     filetype = magic.from_buffer(data, mime=True)
     if filetype == OCT_STREAM:
@@ -237,7 +254,11 @@ def get_file_ext(data: bytes) -> str:
     return '.'+filetype.split('/')[-1]
 
 
-def decode_files(src: str, dst: str, key: str, detect_type: bool, pb_cb: Callable[[Progressbar], bool] = None) -> None:
+def decode_files(src: str,
+                 dst: str,
+                 key: str,
+                 detect_type: bool,
+                 pb_cb: Callable[[Progressbar], bool] = None) -> None:
     """`decode_files` Decodes the files
 
     Finds all rpgmvp and rpgmvo files and decodes them
@@ -247,7 +268,9 @@ def decode_files(src: str, dst: str, key: str, detect_type: bool, pb_cb: Callabl
     - `dst` (`str`): Destination directory for output
     - `key` (`str`): Key to use for decoding
     - `detect_type` (`bool`): If file extensions should be detected from the file contents
-    - `pb_cb` (`Callable[[click._termui_impl.Progressbar], bool]`, optional): Callback to display current progress. Call with `None` when bar is complete. Returns `True` if the user has canceled the operation. Defaults to `None`.
+    - `pb_cb` (`Callable[[click._termui_impl.Progressbar], bool]`, optional): Callback to\
+    display current progress. Call with `None` when bar is complete. Returns `True` if the\
+    user has canceled the operation. Defaults to `None`.
     """
     source_dir = Path(src).resolve()
     target_dir = Path(dst).resolve()
@@ -258,40 +281,40 @@ def decode_files(src: str, dst: str, key: str, detect_type: bool, pb_cb: Callabl
 
     files: List[Path] = sorted(source_dir.glob('**/*.rpgmv[op]'))
 
-    with click.progressbar(files, label="Decoding files") as bar:
+    with click.progressbar(files, label="Decoding files") as all_files:
         filename: Path
-        for filename in bar:
-            if None != pb_cb:
-                if pb_cb(bar):
+        for filename in all_files:
+            if pb_cb is not None:
+                if pb_cb(all_files):
                     break
-            outputFile: PurePath = destination.joinpath(
+            output_file: PurePath = destination.joinpath(
                 PurePath(filename).relative_to(source))
             result: bytes
             with click.open_file(filename, 'rb') as file:
-                fileHeader: bytes = file.read(32)
+                file_header: bytes = file.read(32)
                 try:
-                    result = read_header_and_decode(fileHeader, key=key)
+                    result = read_header_and_decode(file_header, key=key)
                     result += file.read()
                 except FileFormatError as ffe:
                     click.echo(ffe.expression)
                     continue
-            if(detect_type):
+            if detect_type:
                 try:
-                    outputFile = outputFile.with_suffix(get_file_ext(result))
+                    output_file = output_file.with_suffix(get_file_ext(result))
                 except FileFormatError:
                     click.echo("Found octlet stream, key is probably incorrect, skipping %s" %
                                click.format_filename(str(filename)))
                     continue
             else:
-                if outputFile.suffix == ".rpgmvp":
-                    outputFile = outputFile.with_suffix(".png")
-                if outputFile.suffix == ".rpgmvo":
-                    outputFile = outputFile.with_suffix(".ogg")
+                if output_file.suffix == ".rpgmvp":
+                    output_file = output_file.with_suffix(".png")
+                if output_file.suffix == ".rpgmvo":
+                    output_file = output_file.with_suffix(".ogg")
             try:
-                os.makedirs(outputFile.parent)
+                os.makedirs(output_file.parent)
             except FileExistsError:
                 pass
-            with open(outputFile, mode='wb') as file:
+            with open(output_file, mode='wb') as file:
                 file.write(result)
-    if None != pb_cb:
+    if pb_cb is not None:
         pb_cb(None)

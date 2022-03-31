@@ -4,17 +4,19 @@
 
 from setuptools import setup, find_packages
 
+# pylint: disable=invalid-name
+
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=7.0', ]
+requirements = ['Click>=7.0', 'python-magic>=0.4.16', 'pygubu']
 
-setup_requirements = [ ]
+setup_requirements = []
 
-test_requirements = [ ]
+test_requirements = []
 
 setup(
     author="Scott Atkins",
@@ -43,7 +45,8 @@ setup(
     include_package_data=True,
     keywords='rpgmaker_mv_decoder',
     name='rpgmaker_mv_decoder',
-    packages=find_packages(include=['rpgmaker_mv_decoder', 'rpgmaker_mv_decoder.*']),
+    packages=find_packages(
+        include=['rpgmaker_mv_decoder', 'rpgmaker_mv_decoder.*']),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,

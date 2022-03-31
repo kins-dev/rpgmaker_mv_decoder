@@ -18,5 +18,7 @@
         "todos"
     ],
     "esbonio.server.enabled": true,
-    "esbonio.sphinx.confDir": "${workspaceFolder}/docs"
+    "esbonio.sphinx.confDir": "${workspaceFolder}/docs",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }

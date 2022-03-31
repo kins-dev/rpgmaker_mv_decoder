@@ -1,3 +1,4 @@
+"""Custom Exception Types"""
 class Error(Exception):
     """Base class for exceptions in this module.
 
@@ -10,6 +11,7 @@ class Error(Exception):
         Args:
         - `message` (`str`): Explanation of the error
         """
+        Exception.__init__(self)
         self.message: str = message
 
 class NoValidFilesFound(Error):
