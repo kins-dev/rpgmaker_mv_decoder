@@ -160,15 +160,15 @@ def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
     with click.progressbar(files, label="Finding key") as all_files:
         filename: Path
         for filename in all_files:
+            item: bytes = None
             if pb_cb is not None:
                 if pb_cb(all_files):
                     break
-            if skipped or (count >= min_found and keys[item] == count):
+            if skipped or (count >= min_found and item is not None and keys[item] == count):
                 skipped = True
                 # move the progress bar to 100%
                 continue
             with click.open_file(filename, 'rb') as file:
-                item: bytes
                 try:
                     item = read_header_and_decode(
                         file.read(32), png_ihdr_data=file.read(17)).hex()
