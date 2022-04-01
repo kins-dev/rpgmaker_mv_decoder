@@ -3,7 +3,7 @@ rpgmaker_mv_decoder
 ===================
 
 
-.. image:: https://img.shields.io/pypi/v/rpgmaker_mv_decoder.svg
+.. image:: https://img.shields.io/pypi/v/rpgmaker_mv_decoder
         :target: https://pypi.python.org/pypi/rpgmaker_mv_decoder
 
 .. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Python%20application

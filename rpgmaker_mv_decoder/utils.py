@@ -11,6 +11,7 @@ from uuid import UUID, uuid4
 
 import click
 import magic
+from click._termui_impl import ProgressBar
 
 from rpgmaker_mv_decoder.exceptions import (FileFormatError, NoValidFilesFound,
                                             PNGHeaderError,
@@ -163,9 +164,9 @@ def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
     return __get_likely_key(keys, count)
 
 
-def _handle_files(pb_cb, keys, all_files) -> int:
+def _handle_files(pb_cb, keys, all_files: ProgressBar) -> int:
     skipped: bool = False
-    min_found: int = max(10, len(all_files) // 20)
+    min_found: int = max(10, all_files.length // 20)
     filename: Path
     count: int = 0
     item: bytes = None
@@ -204,10 +205,10 @@ def _update_key_dict(keys, item):
         keys[item] = 1
 
 
-def _report_results(all_files, count, item):
-    percentage: float = (count * 100.0) / len(all_files)
+def _report_results(all_files: ProgressBar, count, item):
+    percentage: float = (count * 100.0) / all_files.length
     click.echo(
-            f"Calculated the same key for {count}/{len(all_files)} ({percentage}%) files")
+            f"Calculated the same key for {count}/{all_files.length} ({percentage}%) files")
     click.echo(f"Using '{item}' as the key")
 
 
