@@ -12,7 +12,7 @@ from decode import main
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
 from rpgmaker_mv_decoder.utils import guess_at_key
 
-# pylint disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 class TestDecode(unittest.TestCase):
     """Tests for `rpgmaker_mv_decoder` package."""
 
