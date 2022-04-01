@@ -3,11 +3,8 @@
 """Tests for `rpgmaker_mv_decoder` package."""
 
 
-from pathlib import PurePath
 import unittest
-from os import path
-
-from hashlib import md5
+from pathlib import PurePath
 
 import pytest
 from click.testing import CliRunner
