@@ -5,6 +5,7 @@
         "howto",
         "htbp",
         "IHDR",
+        "isdirectory",
         "mkvirtualenv",
         "noconfirm",
         "noupx",
@@ -28,7 +29,7 @@
     ],
     "esbonio.server.enabled": true,
     "esbonio.sphinx.confDir": "${workspaceFolder}/docs",
-    "python.linting.pylintEnabled": false,
+    "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
-    "python.linting.flake8Enabled": true
+    "python.linting.flake8Enabled": false
 }

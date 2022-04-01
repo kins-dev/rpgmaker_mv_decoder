@@ -207,8 +207,9 @@ def _update_key_dict(keys, item):
 
 def _report_results(all_files: ProgressBar, count, item):
     percentage: float = (count * 100.0) / all_files.length
+    click.echo(None)
     click.echo(
-            f"Calculated the same key for {count}/{all_files.length} ({percentage}%) files")
+            f"Calculated the same key for {count}/{all_files.length} ({percentage:0.02f}%) files")
     click.echo(f"Using '{item}' as the key")
 
 
@@ -316,6 +317,7 @@ def decode_files(src: str,
                 try:
                     output_file = output_file.with_suffix(get_file_ext(result))
                 except FileFormatError:
+                    click.echo()
                     click.echo("Found octlet stream, key is probably incorrect, "
                                f"skipping {click.format_filename(str(filename))}")
                     continue

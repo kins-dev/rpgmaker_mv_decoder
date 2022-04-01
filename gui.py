@@ -51,7 +51,7 @@ class _DialogUI(Dialog):
     # pylint: disable=too-many-instance-attributes
 
     def __init__(self, parent):
-        Dialog.__init__(self, parent, modal=True)
+        super().__init__(parent, modal=True)
         self.pb_valid: bool = False
         self.is_canceled: bool = False
         self.max: int = -1
