@@ -43,12 +43,12 @@ class TestDecode(unittest.TestCase):
 
     def test_key_finding_invalid(self):
         """Test invalid source directory."""
-        self.assertRaises(
+        with self.assertRaises(
             NoValidFilesFound,
-            guess_at_key(self.invalid_src_dir),
             msg=f"Invalid directory '{self.invalid_src_dir}' should "
             "raise 'NoValidFilesFound' exception",
-        )
+        ):
+            guess_at_key(self.invalid_src_dir)
 
     def test_decode_files_no_filetype_detection(self):
         """Test finding a key."""
