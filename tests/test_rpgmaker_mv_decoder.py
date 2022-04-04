@@ -3,32 +3,31 @@
 """Tests for `rpgmaker_mv_decoder` package."""
 
 
+import shutil
 import unittest
-from pathlib import PurePath
+from pathlib import PurePath, Path
+from typing import List
 
-import pytest
 from click.testing import CliRunner
 from decode import main
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
-from rpgmaker_mv_decoder.utils import guess_at_key
+from rpgmaker_mv_decoder.utils import decode_files, guess_at_key
 
-# pylint: disable=too-many-instance-attributes
+
 class TestDecode(unittest.TestCase):
     """Tests for `rpgmaker_mv_decoder` package."""
 
     def __init__(self, methodName: str = ...) -> None:
+        super().__init__(methodName)
         self.key = "acbd18db4cc2f85cedef654fccc4a4d8"
-        self.valid_src_dir_1: PurePath = PurePath(
-            "tests/assets/decode_project/www/")
-        self.valid_src_dir_2: PurePath = self.valid_src_dir_1.parent
-        self.valid_src_dir_3: PurePath = self.valid_src_dir_2.parent
-        self.dst_dir: PurePath = PurePath("tests/output/")
+        base_path: PurePath = PurePath("tests/assets/decode_project/www/")
+        self.valid_src_dir: List[PurePath] = [
+            base_path, base_path.parent, base_path.parent.parent]
+        self.dst_dir: PurePath = PurePath("tests/output")
         self.invalid_src_dir: PurePath = PurePath(
             "tests/assets/invalid_project/")
-        self.dst_dir = ""
         self.dst_checksums = {}
         self.src_checksums = {}
-        super().__init__(methodName)
 
     def setUp(self):
         """Set up test fixtures, if any."""
@@ -36,14 +35,37 @@ class TestDecode(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
+    def check_source_files(self):
+        pass
+
     def test_key_finding_invalid(self):
         """Test invalid source directory."""
-        with pytest.raises(NoValidFilesFound):
-            guess_at_key(self.invalid_src_dir)
+        self.assertRaises(NoValidFilesFound,
+                          guess_at_key(self.invalid_src_dir),
+                          msg=f"Invalid directory '{self.invalid_src_dir}' should "
+                              "raise 'NoValidFilesFound' exception")
+
+    def test_decode_files_no_filetype_detection(self):
+        """Test finding a key."""
+        cnt: int = 0
+        for path in self.valid_src_dir:
+            output_dir = self.dst_dir.joinpath(str(cnt))
+            decode_files(path, output_dir, self.key, False)
+            cnt += 1
+        shutil.rmtree(Path(self.dst_dir).resolve())
 
     def test_key_finding_valid(self):
         """Test finding a key."""
-        assert self.key == guess_at_key(self.valid_src_dir_1)
+        for path in self.valid_src_dir:
+            self.assertEqual(self.key, guess_at_key(path),
+                             f"Decoded key doesn't match for '{path}")
+
+
+class TestCLI(unittest.TestCase):
+    """Tests for `rpgmaker_mv_decoder` package."""
+
+    def __init__(self, methodName: str = ...) -> None:
+        super().__init__(methodName)
 
     def test_command_line_interface(self):
         """Test the CLI."""
