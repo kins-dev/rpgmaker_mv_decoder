@@ -36,7 +36,7 @@ class TestDecode(unittest.TestCase):
         """Tear down test fixtures, if any."""
 
     def check_source_files(self):
-        pass
+        """Check md5sums"""
 
     def test_key_finding_invalid(self):
         """Test invalid source directory."""

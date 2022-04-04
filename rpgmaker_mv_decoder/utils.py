@@ -209,7 +209,7 @@ def _report_results(all_files: ProgressBar, count, item):
     percentage: float = (count * 100.0) / all_files.length
     click.echo(None)
     click.echo(
-            f"Calculated the same key for {count}/{all_files.length} ({percentage:0.02f}%) files")
+        f"Calculated the same key for {count}/{all_files.length} ({percentage:0.02f}%) files")
     click.echo(f"Using '{item}' as the key")
 
 
