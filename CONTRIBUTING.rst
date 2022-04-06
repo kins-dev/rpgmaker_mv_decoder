@@ -70,6 +70,7 @@ development.
     $ mkvirtualenv rpgmaker_mv_decoder
     $ cd rpgmaker_mv_decoder/
     $ python setup.py develop
+    $ pip install -r requirements_dev.txt
 
 4. Create a branch for local development::
 

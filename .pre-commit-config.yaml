@@ -29,3 +29,10 @@ repos:
         types: [python]
         require_serial: true
         pass_filenames: false
+    -   id: docs
+        name: make documentation
+        entry: make
+        language: system
+        types: [python]
+        args: [docs]
+        pass_filenames: false
