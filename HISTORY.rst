@@ -3,12 +3,14 @@ History
 =======
 
 0.2.4 (2022-04-06)
+------------------
 
 * More testing
 * Bump2Version configuration fixes
 * Fixing up tox.ini
 
 0.2.3 (2022-04-01)
+------------------
 
 * Added tests
 
