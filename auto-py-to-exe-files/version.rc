@@ -11,13 +11,13 @@
         kids=[StringFileInfo([StringTable(
         u'040904B0',
         [StringStruct(u'FileDescription', u'RPGMaker MV Decoder'),
-        StringStruct(u'FileVersion', u'0.2.3.0'),
+        StringStruct(u'FileVersion', u'0.2.3'),
         StringStruct(u'InternalName', u'RPGMaker MV Decoder'),
         StringStruct(u'LegalCopyright', u'© 2022 Scott Atkins'),
         StringStruct(u'OriginalFilename', u'gui.exe'),
         StringStruct(u'ProductName', u'RPGMaker MV Decoder'),
-        StringStruct(u'ProductVersion', u'0.2.3.0'),
+        StringStruct(u'ProductVersion', u'0.2.3'),
         StringStruct(u'Language', u'Language Neutral'),
-        StringStruct(u'LegalTrademarks', u'')])]), 
+        StringStruct(u'LegalTrademarks', u'')])]),
         VarFileInfo([VarStruct(u'Translation', [1033, 1200])])]
     )
