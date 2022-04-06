@@ -25,11 +25,12 @@ from typing import List
 import commonmark
 from sphinx.application import Sphinx
 
-# pylint: disable=wrong-import-position
-import rpgmaker_mv_decoder
-
 sys.path.insert(0, os.path.abspath(".."))
 
+# pylint: disable=wrong-import-position
+# pylint: disable=using-constant-test
+if True:
+    import rpgmaker_mv_decoder
 
 # pylint: disable=invalid-name
 

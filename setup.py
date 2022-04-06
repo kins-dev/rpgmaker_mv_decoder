@@ -12,7 +12,7 @@ with open("README.rst", encoding="UTF-8") as readme_file:
 with open("HISTORY.rst", encoding="UTF-8") as history_file:
     history = history_file.read()
 
-requirements = ["Click>=7.0", "python-magic>=0.4.16", "pygubu"]
+requirements = ["Click>=7.0", "python-magic>=0.4.16", "pygubu>=0.20"]
 
 setup_requirements = []
 
@@ -51,6 +51,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/kins-dev/rpgmaker_mv_decoder",
-    version="0.2.4",
+    version="0.2.3",
     zip_safe=False,
 )
