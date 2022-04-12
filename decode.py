@@ -8,6 +8,8 @@ import click
 
 from rpgmaker_mv_decoder.utils import decode_files, guess_at_key
 
+# pylint: disable=duplicate-code
+
 SOURCE_STR = (
     "The source directory. For best results this should be the parent "
     "of the 'www' or 'img' directory."
