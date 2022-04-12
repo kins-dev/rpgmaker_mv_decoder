@@ -47,6 +47,21 @@ def __int_xor(var: bytes, key: bytes) -> bytes:
     return int_enc.to_bytes(len(var), sys.byteorder)
 
 
+def encode_header(file_header: bytes, key: str) -> bytes:
+    """`encode_header` Encode a file with a key
+
+    Takes first 16 bytes and encodes per RPGMaker MV standard
+
+    Args:
+    - `file_header` (`bytes`): 16 bytes
+    - `key` (`str`): Key to encode with
+
+    Returns:
+    - `bytes`: First 32 bytes of the encoded file
+    """
+    return RPG_MAKER_MV_MAGIC + __int_xor(bytes.fromhex(key), file_header)
+
+
 def read_header_and_decode(
     file_header: bytes, png_ihdr_data: bytes = None, key: str = PNG_HEADER
 ) -> bytes:
@@ -333,6 +348,57 @@ def decode_files(
             else:
                 output_file = _get_std_ext(output_file)
             _save_file(output_file, result)
+    if pb_cb is not None:
+        pb_cb(None)
+
+
+def encode_files(
+    src: str,
+    dst: str,
+    key: str,
+    pb_cb: Callable[[Progressbar], bool] = None,
+) -> None:
+    """`encode_files` Encodes the files
+
+    Finds all images and audio files and encodes them
+
+    Args:
+    - `src` (`str`): Source directory to search
+    - `dst` (`str`): Destination directory for output
+    - `key` (`str`): Key to use for encoding
+    - `pb_cb` (`Callable[[click._termui_impl.Progressbar], bool]`, optional): Callback to\
+    display current progress. Call with `None` when bar is complete. Returns `True` if the\
+    user has canceled the operation. Defaults to `None`.
+    """
+    # pylint: disable=too-many-locals
+    source_dir = Path(src).resolve()
+    target_dir = Path(dst).resolve()
+    (source, destination) = __update_src_dest(source_dir, target_dir)
+
+    click.echo(f"Reading from: '{source}'")
+    click.echo(f"Writing to:   '{destination}'")
+
+    files: List[Path] = sorted(source_dir.glob("**/*.*"))
+
+    with click.progressbar(files, label="Encoding files") as all_files:
+        filename: Path
+        for filename in all_files:
+            if pb_cb is not None:
+                if pb_cb(all_files):
+                    break
+            output_file: PurePath = destination.joinpath(PurePath(filename).relative_to(source))
+            filetype: str
+            with click.open_file(filename, "rb") as file:
+
+                file_header: bytes = file.read(16)
+                data: bytes = file.read()
+                filetype = magic.from_buffer(file_header + data, mime=True)
+                data = encode_header(file_header, key=key) + data
+            if filetype.startswith("image"):
+                output_file = output_file.with_suffix(".rpgmvp")
+            elif filetype.startswith("audio"):
+                output_file = output_file.with_suffix(".rpgmvp")
+            _save_file(output_file, data)
     if pb_cb is not None:
         pb_cb(None)
 
