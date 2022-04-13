@@ -14,7 +14,7 @@
         StringStruct(u'FileVersion', u'0.2.4'),
         StringStruct(u'InternalName', u'RPGMaker MV Decoder / Encoder'),
         StringStruct(u'LegalCopyright', u'© 2022 Scott Atkins'),
-        StringStruct(u'OriginalFilename', u'gui.exe'),
+        StringStruct(u'OriginalFilename', u'RPGMaker MV Decoder - Encoder.exe'),
         StringStruct(u'ProductName', u'RPGMaker MV Decoder / Encoder'),
         StringStruct(u'ProductVersion', u'0.2.4'),
         StringStruct(u'Language', u'Language Neutral'),

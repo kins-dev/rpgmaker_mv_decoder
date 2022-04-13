@@ -2,6 +2,15 @@
 History
 =======
 
+0.3.0 (2022-04-13)
+------------------
+
+* Added icons
+* Added encoding
+* Changed exe name
+* UPX packing on Windows
+* Documentation updates
+
 0.2.4 (2022-04-06)
 ------------------
 
