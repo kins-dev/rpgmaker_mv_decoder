@@ -1,4 +1,4 @@
-# rpgmaker_mv_decoder v0.2.4
+# rpgmaker_mv_decoder v0.3.0
 
 [![Documentation Status](https://readthedocs.org/projects/rpgmaker-mv-decoder/badge/?version=latest)](https://rpgmaker-mv-decoder.readthedocs.io/en/latest/?version=latest)
 
