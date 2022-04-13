@@ -18,6 +18,18 @@
    "value": false
   },
   {
+   "optionDest": "icon_file",
+   "value": "C:/Users/tester/rpgmaker_mv_decoder/assets/icon.ico"
+  },
+  {
+   "optionDest": "name",
+   "value": "RPGMaker MV Decoder - Encoder"
+  },
+  {
+   "optionDest": "upx_dir",
+   "value": "C:\\Users\\tester\\upx-3.96-win64"
+  },
+  {
    "optionDest": "ascii",
    "value": false
   },
