@@ -1,11 +1,12 @@
-# rpgmaker_mv_decoder v0.3.0
+# RPGMaker MV Decoder v0.3.0
 
-[![Documentation Status](https://readthedocs.org/projects/rpgmaker-mv-decoder/badge/?version=latest)](https://rpgmaker-mv-decoder.readthedocs.io/en/latest/?version=latest)
+[![Pylint Status](https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Pylint?label=Pylint&logo=GitHub)](https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/pylint.yml) [![CodeQL Status](https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/CodeQL?label=CodeQL&logo=GitHub)](https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/codeql-analysis.yml) [![Python Application Status](https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Python%20application?label=Python%20application&logo=GitHub)](https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-app.yml) [![Pylint Status](https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Upload%20Python%20Package?label=Upload%20Python%20Package&logo=GitHub)](https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-publish.yml)
+[![Latest pypi release](https://img.shields.io/pypi/v/rpgmaker_mv_decoder?label=Latest%20pypi%20release&logo=pypi&color=green)](https://pypi.python.org/pypi/rpgmaker_mv_decoder) [![Documentation status](https://img.shields.io/readthedocs/rpgmaker_mv_decoder/v0.3.0?label=Documentation&logo=readthedocs)](https://rpgmaker-mv-decoder.readthedocs.io/en/latest/?version=v0.3.0)
 
-This is a python script for decoding RPG Maker MV/MZ game assets.
+This is a set of python scripts for decoding and encoding RPGMaker MV/MZ game assets.
 
-This has a handy feature, it will figure out (if possible) the key automatically.
-It will also use the file header info for creating the extension.
+Decoding has a handy feature, it will figure out (if possible) the key automatically.
+It will also can use the file data for creating the extension.
 If you know the key, you can pass it in.
 
 If you want you can use the [API](https://rpgmaker-mv-decoder.readthedocs.io) instead

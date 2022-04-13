@@ -1,44 +1,89 @@
-===================
-rpgmaker_mv_decoder
-===================
+
+RPGMaker MV Decoder v0.3.0
+==========================
 
 
-.. image:: https://img.shields.io/pypi/v/rpgmaker_mv_decoder
-        :target: https://pypi.python.org/pypi/rpgmaker_mv_decoder
+.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Pylint?label=Pylint&logo=GitHub
+   :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/pylint.yml
+   :alt: Pylint Status
+ 
+.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/CodeQL?label=CodeQL&logo=GitHub
+   :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/codeql-analysis.yml
+   :alt: CodeQL Status
+ 
+.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Python%20application?label=Python%20application&logo=GitHub
+   :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-app.yml
+   :alt: Python Application Status
+ 
+.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Upload%20Python%20Package?label=Upload%20Python%20Package&logo=GitHub
+   :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-publish.yml
+   :alt: Pylint Status
 
-.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Python%20application
-        :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-app.yml
-        :alt: GitHub Workflow Status
 
-.. image:: https://readthedocs.org/projects/rpgmaker-mv-decoder/badge/?version=latest
-        :target: https://rpgmaker-mv-decoder.readthedocs.io/en/latest/?version=latest
-        :alt: Documentation Status
-
-
-
-
-Quickly decode assets for RPG Maker MV, even if you don't have the key
+.. image:: https://img.shields.io/pypi/v/rpgmaker_mv_decoder?label=Latest%20pypi%20release&logo=pypi&color=green
+   :target: https://pypi.python.org/pypi/rpgmaker_mv_decoder
+   :alt: Latest pypi release
+ 
+.. image:: https://img.shields.io/readthedocs/rpgmaker_mv_decoder/v0.3.0?label=Documentation&logo=readthedocs
+   :target: https://rpgmaker-mv-decoder.readthedocs.io/en/latest/?version=v0.3.0
+   :alt: Documentation status
 
 
-* Free software: MIT license
-* Documentation: https://rpgmaker-mv-decoder.readthedocs.io.
+This is a set of python scripts for decoding and encoding RPGMaker MV/MZ game assets.
 
+Decoding has a handy feature, it will figure out (if possible) the key automatically.
+It will also can use the file data for creating the extension.
+If you know the key, you can pass it in.
+
+If you want you can use the `API <https://rpgmaker-mv-decoder.readthedocs.io>`_ instead
 
 Features
 --------
 
-* Figures out the encoding key automatically if multiple png files can be found
-* Confidence level on the key found
-* Allows overriding the key on the command line
+
+* GUI for those who need that
 * Fast
-* Small code base
-* Shows the top 10 keys found
+* No key needed if there's any encoded png images
+* Can put proper file extensions on the decoded files
 
-Credits
--------
+Example usage
+-------------
 
-This package was created with Cookiecutter_ and
-the `audreyr/cookiecutter-pypackage`_ project template.
+.. code-block:: bash
 
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+   ./decoder.py "<source path>" "<destination path>" ["<optional key>"]
+
+.. code-block:: bash
+
+   ./encoder.py "<source path>" "<destination path>" "<key>"
+
+.. code-block:: bash
+
+   ./gui.py
+
+Help
+----
+
+You can use the standard ``--help`` option for full documentation:
+
+.. code-block:: plain
+
+   Usage: decode.py [OPTIONS] <Source> <Destination> [<Key>]
+
+     Decodes RPGMaker files under <Source> directory to <Destination> directory.
+
+   Arguments:
+     <Source>       The source directory. For best results this should be the
+                    parent of the 'www' or 'img' directory.
+     <Destination>  The parent destination directory. This script will create a
+                    project directory under this path if it doesn't already
+                    exist.
+     <Key>          The decoding key to use. This argument is optional. If the
+                    key is omitted it will be inferred (if possible) based on the
+                    file contents.
+
+   Options:
+     --detect_type  Detect the file type and use the associated file extension.
+                    By default .rpgmvp becomes .png and .rpgmvo becomes .ogg
+                    regardless of the file contents.
+     --help         Show this message and exit.

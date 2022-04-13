@@ -63,8 +63,7 @@ CMD_HELP = "Encodes image and audio files under <Source> directory."
     required=True,
     metavar="<Destination>",
 )
-@click.argument("key", type=str, required=True, metavar="[<Key>]")
-#             '-------------'
+@click.argument("key", type=str, required=True, metavar="<Key>")
 def main(source: click.Path = None, destination: click.Path = None, key: str = None) -> None:
     """`main` The main function
 
