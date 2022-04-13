@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""decode.py is the entry script for CLI decoding"""
+"""encode.py is the entry script for CLI encoding"""
 import sys
 from argparse import HelpFormatter
 from gettext import gettext as _

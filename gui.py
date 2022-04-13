@@ -9,8 +9,9 @@ from click._termui_impl import ProgressBar
 from pygubu.widgets.dialog import Dialog
 from pygubu.widgets.pathchooserinput import PathChooserInput
 
+from icon_data import ICON
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
-from rpgmaker_mv_decoder.utils import decode_files, guess_at_key
+from rpgmaker_mv_decoder.utils import decode_files, encode_files, guess_at_key
 
 PROJECT_PATH = pathlib.Path(__file__).parent
 PROJECT_UI = PROJECT_PATH / "gui.ui"
@@ -33,17 +34,6 @@ def _format_eta(click_pb: ProgressBar) -> str:
             return f"ETA: {hours:02}:{minutes:02}:{seconds:02}"
         return f"ETA: {time}d {hours:02}:{minutes:02}:{seconds:02}"
     return ""
-
-
-def _validate_text(new_text: str) -> bool:
-    data = new_text.replace(" ", "")
-    if data == "":
-        return True
-    try:
-        int(data, 16)
-        return True
-    except ValueError:
-        return False
 
 
 class _DialogUI(Dialog):
@@ -170,6 +160,41 @@ class _GuiApp:
     def __init__(self, master=None):
         # build ui
         self.window = tk.Tk() if master is None else tk.Toplevel(master)
+        self._setup_path_dialogs()
+        self.checkbox_detect_ext = ttk.Checkbutton(self.frame_opt)
+        self.detect_file_ext = tk.StringVar(value="")
+        self.checkbox_detect_ext.configure(
+            text="Detect File Extensions", underline="7", variable=self.detect_file_ext
+        )
+        self.checkbox_detect_ext.grid(column="0", columnspan="3", row="0", sticky="w")
+        self.entry_key = ttk.Entry(self.frame_opt)
+        self.gui_key = ""
+        self.entry_key.configure(state="normal", validate="all", width="32")
+        self.entry_key.grid(column="0", row="1", sticky="w")
+        _validatecmd = (self.entry_key.register(self._validate_text), "%P")
+        self.entry_key.configure(validatecommand=_validatecmd)
+        self.button_detect = ttk.Button(self.frame_opt)
+        self.button_detect.configure(state="disabled", text="Detect Key", underline="7")
+        self.button_detect.grid(column="2", row="1", sticky="e")
+        self.button_detect.configure(command=self._detect)
+        self.frame_opt.configure(padding="10", text="Options")
+        self.frame_opt.pack(side="top")
+        self.frame_opt.columnconfigure("1", minsize="10")
+        self._setup_action_frame()
+        self.window.configure(padx="10", pady="5")
+        self.img_icon = tk.PhotoImage(data=ICON["data"], format=ICON["format"])
+        self.window.iconphoto(True, self.img_icon)
+        self.window.title("RPGMaker MV Decoder / Encoder")
+        self.window.resizable(0, 0)
+        self.dialog = _DialogUI(self.window)
+
+        # Main widget
+        self.main_window = self.window
+        self.dialog_shown: bool = False
+        self.src_path = ""
+        self.dst_path = ""
+
+    def _setup_path_dialogs(self):
         self.frame_src = ttk.Labelframe(self.window)
         self.path_src = PathChooserInput(self.frame_src)
         self.path_src.configure(mustexist="true", title="Source Directory", type="directory")
@@ -185,42 +210,20 @@ class _GuiApp:
         self.frame_dst.configure(padding="5", text="Destination Directory")
         self.frame_dst.pack(expand="true", fill="x", side="top")
         self.frame_opt = ttk.Labelframe(self.window)
-        self.checkbox_detect_ext = ttk.Checkbutton(self.frame_opt)
-        self.detect_file_ext = tk.StringVar(value="")
-        self.checkbox_detect_ext.configure(
-            text="Detect File Extensions", underline="7", variable=self.detect_file_ext
-        )
-        self.checkbox_detect_ext.grid(column="0", columnspan="3", row="0", sticky="w")
-        self.entry_key = ttk.Entry(self.frame_opt)
-        self.gui_key = tk.StringVar(value="")
-        self.entry_key.configure(
-            state="normal", textvariable=self.gui_key, validate="all", width="32"
-        )
-        self.entry_key.grid(column="0", row="1", sticky="w")
-        _validatecmd = (self.entry_key.register(_validate_text), "%P")
-        self.entry_key.configure(validatecommand=_validatecmd)
-        self.button_detect = ttk.Button(self.frame_opt)
-        self.button_detect.configure(state="disabled", text="Detect Key", underline="7")
-        self.button_detect.grid(column="2", row="1", sticky="e")
-        self.button_detect.configure(command=self._detect)
-        self.frame_opt.configure(padding="10", text="Options")
-        self.frame_opt.pack(side="top")
-        self.frame_opt.columnconfigure("1", minsize="10")
+
+    def _setup_action_frame(self):
         self.frame_action = ttk.Frame(self.window)
         self.button_decode = ttk.Button(self.frame_action)
         self.button_decode.configure(state="disabled", text="Decode", underline="0")
-        self.button_decode.pack(pady="5", side="top")
+        self.button_decode.grid(column="0", row="0")
         self.button_decode.configure(command=self._decode)
-        self.frame_action.pack(side="top")
-        self.window.configure(padx="10", pady="5")
-        self.window.title("RPGMaker MV Decoder")
-        self.dialog = _DialogUI(self.window)
-
-        # Main widget
-        self.main_window = self.window
-        self.dialog_shown: bool = False
-        self.src_path = ""
-        self.dst_path = ""
+        self.button_encode = ttk.Button(self.frame_action)
+        self.button_encode.configure(state="disabled", text="Encode", underline="0")
+        self.button_encode.grid(column="2", row="0")
+        self.button_encode.configure(command=self._encode)
+        self.frame_action.pack(anchor="center", fill="x", pady="5", side="top")
+        self.frame_action.grid_anchor("center")
+        self.frame_action.columnconfigure("1", minsize="120")
 
     def run(self):
         """`run` Runs the UI"""
@@ -232,12 +235,17 @@ class _GuiApp:
     def _disable_buttons(self):
         self.button_detect["state"] = tk.DISABLED
         self.button_decode["state"] = tk.DISABLED
+        self.button_encode["state"] = tk.DISABLED
 
     def _set_button_state(self):
         if self.src_path != "":
-            self.button_detect["state"] = tk.NORMAL
+            if self.gui_key == "":
+                self.button_detect["state"] = tk.NORMAL
         if self.src_path != "" and self.dst_path != "":
-            self.button_decode["state"] = tk.NORMAL
+            if self.gui_key == "" or len(self.gui_key) == 32:
+                self.button_decode["state"] = tk.NORMAL
+        if self.src_path != "" and self.dst_path != "" and len(self.gui_key) == 32:
+            self.button_encode["state"] = tk.NORMAL
 
     def _callback_path_src(self, _event=None):
         self.src_path = self.path_src.entry.get()
@@ -264,6 +272,22 @@ class _GuiApp:
             if self.dialog_shown:
                 self.dialog.close()
         self.dialog_shown = False
+
+    def _validate_text(self, new_text: str) -> bool:
+        data = new_text.replace(" ", "")
+        if data == "":
+            self.gui_key = data
+            self._disable_buttons()
+            self._set_button_state()
+            return True
+        try:
+            int(data, 16)
+            self.gui_key = data
+            self._disable_buttons()
+            self._set_button_state()
+            return True
+        except ValueError:
+            return False
 
     def _detect(self, decode: bool = False):
         def _detect_key():
@@ -309,6 +333,25 @@ class _GuiApp:
             self._set_button_state()
 
         threading.Thread(target=_decode_files).start()
+        self._disable_buttons()
+
+    def _encode(self):
+        def _show_dialog_encode():
+            self._show_dialog("Encoding Files", "Encoding all files")
+
+        threading.Thread(target=_show_dialog_encode).start()
+
+        def _encode_files():
+            encode_files(
+                self.src_path,
+                self.dst_path,
+                self.entry_key.get(),
+                self.dialog.set_progress,
+            )
+            self._hide_dialog()
+            self._set_button_state()
+
+        threading.Thread(target=_encode_files).start()
         self._disable_buttons()
 
 

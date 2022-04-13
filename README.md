@@ -24,6 +24,10 @@ If you want you can use the [API](https://rpgmaker-mv-decoder.readthedocs.io) in
 ```
 
 ```bash
+./encoder.py "<source path>" "<destination path>" "<key>"
+```
+
+```bash
 ./gui.py
 ```
 

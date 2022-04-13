@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <interface version="1.2">
   <object class="tk.Toplevel" id="Window">
+    <property name="iconbitmap">icon.png</property>
+    <property name="iconphoto">icon.png</property>
     <property name="padx">10</property>
     <property name="pady">5</property>
     <property name="title" translatable="yes">RPGMaker MV Decoder</property>
@@ -78,7 +80,6 @@
         <child>
           <object class="ttk.Entry" id="entryKey">
             <property name="state">normal</property>
-            <property name="textvariable">string:gui_key</property>
             <property name="validate">all</property>
             <property name="validatecommand" type="command" cbtype="entry_validate" args="%P">checkText</property>
             <property name="width">32</property>
@@ -107,17 +108,36 @@
     <child>
       <object class="ttk.Frame" id="frameAction">
         <layout manager="pack">
+          <property name="anchor">center</property>
+          <property name="fill">x</property>
+          <property name="pady">5</property>
           <property name="side">top</property>
         </layout>
+        <containerlayout manager="grid">
+          <property name="anchor">center</property>
+          <property type="col" id="1" name="minsize">120</property>
+        </containerlayout>
         <child>
           <object class="ttk.Button" id="buttonDecode">
             <property name="command" type="command" cbtype="simple">decode</property>
             <property name="state">disabled</property>
             <property name="text" translatable="yes">Decode</property>
             <property name="underline">0</property>
-            <layout manager="pack">
-              <property name="pady">5</property>
-              <property name="side">top</property>
+            <layout manager="grid">
+              <property name="column">0</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="buttonEncode">
+            <property name="command" type="command" cbtype="simple">encode</property>
+            <property name="state">disabled</property>
+            <property name="text" translatable="yes">Encode</property>
+            <property name="underline">0</property>
+            <layout manager="grid">
+              <property name="column">2</property>
+              <property name="row">0</property>
             </layout>
           </object>
         </child>
