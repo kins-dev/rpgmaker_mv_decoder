@@ -1,26 +1,26 @@
 
-RPGMaker MV Decoder v0.3.2
+RPGMaker MV Decoder v0.3.3
 ==========================
 
 
-.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Pylint/v0.3.2?label=v0.3.2%20Pylint&logo=GitHub
+.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Pylint/v0.3.3?label=v0.3.3%20Pylint&logo=GitHub
    :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/pylint.yml
-   :alt: v0.3.2 Pylint Status
+   :alt: v0.3.3 Pylint Status
  
-.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/CodeQL/v0.3.2?label=v0.3.2%20CodeQL&logo=GitHub
+.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/CodeQL/v0.3.3?label=v0.3.3%20CodeQL&logo=GitHub
    :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/codeql-analysis.yml
-   :alt: v0.3.2 CodeQL Status
+   :alt: v0.3.3 CodeQL Status
  
-.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Python%20application/v0.3.2?label=v0.3.2%20Python%20application&logo=GitHub
+.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Python%20application/v0.3.3?label=v0.3.3%20Python%20application&logo=GitHub
    :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-app.yml
-   :alt: v0.3.2 Python Application Status
+   :alt: v0.3.3 Python Application Status
  
-.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Upload%20Python%20Package/v0.3.2?label=v0.3.2%20Upload%20Python%20Package&logo=GitHub
+.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Upload%20Python%20Package/v0.3.3?label=v0.3.3%20Upload%20Python%20Package&logo=GitHub
    :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-publish.yml
-   :alt: v0.3.2 Pylint Status
+   :alt: v0.3.3 Pylint Status
  
-.. image:: https://img.shields.io/readthedocs/rpgmaker_mv_decoder/v0.3.2?label=v0.3.2%20Documentation&logo=readthedocs
-   :target: https://rpgmaker-mv-decoder.readthedocs.io/en/latest/?version=v0.3.2
+.. image:: https://img.shields.io/readthedocs/rpgmaker_mv_decoder/v0.3.3?label=v0.3.3%20Documentation&logo=readthedocs
+   :target: https://rpgmaker-mv-decoder.readthedocs.io/en/latest/?version=v0.3.3
    :alt: Documentation status
 
 
