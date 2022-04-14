@@ -32,7 +32,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest pyinstaller
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install -r requirements.txt
     - name: Build
       run: |
         pyinstaller --noconfirm --onefile --windowed --icon "assets/icon.ico" --name "RPGMaker MV Decoder - Encoder" --version-file "auto-py-to-exe-files/version.rc"  "gui.py"
