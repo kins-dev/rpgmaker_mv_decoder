@@ -3,10 +3,6 @@ RPGMaker MV Decoder v0.3.3
 ==========================
 
 
-.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Pylint/v0.3.3?label=v0.3.3%20Pylint&logo=GitHub
-   :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/pylint.yml
-   :alt: v0.3.3 Pylint Status
- 
 .. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/CodeQL/v0.3.3?label=v0.3.3%20CodeQL&logo=GitHub
    :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/codeql-analysis.yml
    :alt: v0.3.3 CodeQL Status
@@ -66,6 +62,9 @@ Help
 
 You can use the standard ``--help`` option for full documentation:
 
+Decoding
+^^^^^^^^
+
 .. code-block:: plain
 
    Usage: decode.py [OPTIONS] <Source> <Destination> [<Key>]
@@ -87,3 +86,23 @@ You can use the standard ``--help`` option for full documentation:
                     By default .rpgmvp becomes .png and .rpgmvo becomes .ogg
                     regardless of the file contents.
      --help         Show this message and exit.
+
+Encoding
+^^^^^^^^
+
+.. code-block:: plain
+
+   Usage: encode.py [OPTIONS] <Source> <Destination> <Key>
+
+     Encodes image and audio files under <Source> directory.
+
+   Arguments:
+     <Source>       The source directory. For best results this should be the
+                    parent of the 'www' or 'img' directory.
+     <Destination>  The parent destination directory. This script will create a
+                    project directory under this path if it doesn't already
+                    exist.
+     <Key>          The encoding key to use.
+
+   Options:
+     --help  Show this message and exit.

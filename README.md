@@ -1,6 +1,6 @@
 # RPGMaker MV Decoder v0.3.3
 
-[![v0.3.3 Pylint Status](https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Pylint/v0.3.3?label=v0.3.3%20Pylint&logo=GitHub)](https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/pylint.yml) [![v0.3.3 CodeQL Status](https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/CodeQL/v0.3.3?label=v0.3.3%20CodeQL&logo=GitHub)](https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/codeql-analysis.yml) [![v0.3.3 Python Application Status](https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Python%20application/v0.3.3?label=v0.3.3%20Python%20application&logo=GitHub)](https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-app.yml) [![v0.3.3 Pylint Status](https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Upload%20Python%20Package/v0.3.3?label=v0.3.3%20Upload%20Python%20Package&logo=GitHub)](https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-publish.yml) [![Documentation status](https://img.shields.io/readthedocs/rpgmaker_mv_decoder/v0.3.3?label=v0.3.3%20Documentation&logo=readthedocs)](https://rpgmaker-mv-decoder.readthedocs.io/en/latest/?version=v0.3.3)
+[![v0.3.3 CodeQL Status](https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/CodeQL/v0.3.3?label=v0.3.3%20CodeQL&logo=GitHub)](https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/codeql-analysis.yml) [![v0.3.3 Python Application Status](https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Python%20application/v0.3.3?label=v0.3.3%20Python%20application&logo=GitHub)](https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-app.yml) [![v0.3.3 Pylint Status](https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Upload%20Python%20Package/v0.3.3?label=v0.3.3%20Upload%20Python%20Package&logo=GitHub)](https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-publish.yml) [![Documentation status](https://img.shields.io/readthedocs/rpgmaker_mv_decoder/v0.3.3?label=v0.3.3%20Documentation&logo=readthedocs)](https://rpgmaker-mv-decoder.readthedocs.io/en/latest/?version=v0.3.3)
 [![Latest pypi release](https://img.shields.io/pypi/v/rpgmaker_mv_decoder?label=Latest%20pypi%20release&logo=pypi&color=blue)](https://pypi.python.org/pypi/rpgmaker_mv_decoder)
 
 This is a set of python scripts for decoding and encoding RPGMaker MV/MZ game assets.
@@ -36,6 +36,8 @@ If you want you can use the [API](https://rpgmaker-mv-decoder.readthedocs.io) in
 
 You can use the standard `--help` option for full documentation:
 
+### Decoding
+
 ```plain
 Usage: decode.py [OPTIONS] <Source> <Destination> [<Key>]
 
@@ -56,4 +58,23 @@ Options:
                  By default .rpgmvp becomes .png and .rpgmvo becomes .ogg
                  regardless of the file contents.
   --help         Show this message and exit.
+```
+
+### Encoding
+
+```plain
+Usage: encode.py [OPTIONS] <Source> <Destination> <Key>
+
+  Encodes image and audio files under <Source> directory.
+
+Arguments:
+  <Source>       The source directory. For best results this should be the
+                 parent of the 'www' or 'img' directory.
+  <Destination>  The parent destination directory. This script will create a
+                 project directory under this path if it doesn't already
+                 exist.
+  <Key>          The encoding key to use.
+
+Options:
+  --help  Show this message and exit.
 ```

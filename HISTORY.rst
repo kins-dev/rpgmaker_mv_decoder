@@ -2,6 +2,12 @@
 History
 =======
 
+0.3.4 (2022-04-14)
+------------------
+
+* Updating actions to publish properly
+* Documentation updates
+
 0.3.3 (2022-04-14)
 ------------------
 
