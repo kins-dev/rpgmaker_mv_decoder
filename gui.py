@@ -3,13 +3,15 @@
 import pathlib
 import threading
 import tkinter as tk
+import webbrowser
 from tkinter import ttk
 
 from click._termui_impl import ProgressBar
 from pygubu.widgets.dialog import Dialog
 from pygubu.widgets.pathchooserinput import PathChooserInput
 
-from icon_data import ICON
+import rpgmaker_mv_decoder
+from icon_data import ABOUT_ICON, TITLE_BAR_ICON
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
 from rpgmaker_mv_decoder.utils import decode_files, encode_files, guess_at_key
 
@@ -155,6 +157,47 @@ class _DialogUI(Dialog):
         return self.is_canceled
 
 
+def _open_github():
+    url = "https://git.kins.dev/rpgmaker_mv_decoder"
+    webbrowser.open(url, new=0, autoraise=True)
+
+
+class _AboutUI(Dialog):
+    def __init__(self, parent):
+        super().__init__(parent, modal=True)
+
+    def _create_ui(self):
+        # build ui
+        self.label_title = ttk.Label(self.toplevel)
+        self.label_title.configure(
+            font="TkHeadingFont",
+            justify="left",
+            relief="flat",
+            text="RPGMaker MV Decoder / Encoder",
+        )
+        self.label_title.grid(column="0", padx="5", pady="5", row="0")
+        self.label_version = ttk.Label(self.toplevel)
+        self.label_version.configure(
+            text=f"""Version: {rpgmaker_mv_decoder.__version__}
+
+Copyright 2022 by Scott@kins.dev
+All rights reserved
+
+See GitHub for license information
+"""
+        )
+        self.label_version.grid(column="0", padx="5", row="2", sticky="w")
+        self.button_github = ttk.Button(self.toplevel)
+        self.button_github.configure(text="GitHub")
+        self.button_github.grid(column="0", pady="5", row="5")
+        self.button_github.configure(command=_open_github)
+        self.toplevel.configure(height="100", width="200")
+        self.toplevel.resizable(False, False)
+        self.toplevel.title("About RPGMaker MV Decoder / Encoder")
+        self.img_icon = tk.PhotoImage(data=TITLE_BAR_ICON["data"], format=TITLE_BAR_ICON["format"])
+        self.toplevel.iconphoto(True, self.img_icon)
+
+
 class _GuiApp:
     # pylint: disable=too-many-instance-attributes,too-few-public-methods
     def __init__(self, master=None):
@@ -182,11 +225,12 @@ class _GuiApp:
         self.frame_opt.columnconfigure("1", minsize="10")
         self._setup_action_frame()
         self.window.configure(padx="10", pady="5")
-        self.img_icon = tk.PhotoImage(data=ICON["data"], format=ICON["format"])
+        self.img_icon = tk.PhotoImage(data=TITLE_BAR_ICON["data"], format=TITLE_BAR_ICON["format"])
         self.window.iconphoto(True, self.img_icon)
         self.window.title("RPGMaker MV Decoder / Encoder")
         self.window.resizable(0, 0)
         self.dialog = _DialogUI(self.window)
+        self.about = _AboutUI(self.window)
 
         # Main widget
         self.main_window = self.window
@@ -215,15 +259,23 @@ class _GuiApp:
         self.frame_action = ttk.Frame(self.window)
         self.button_decode = ttk.Button(self.frame_action)
         self.button_decode.configure(state="disabled", text="Decode", underline="0")
-        self.button_decode.grid(column="0", row="0")
+        self.button_decode.grid(column="0", row="0", sticky="w")
         self.button_decode.configure(command=self._decode)
         self.button_encode = ttk.Button(self.frame_action)
         self.button_encode.configure(state="disabled", text="Encode", underline="0")
         self.button_encode.grid(column="2", row="0")
         self.button_encode.configure(command=self._encode)
-        self.frame_action.pack(anchor="center", fill="x", pady="5", side="top")
+        self.button_about = ttk.Button(self.frame_action)
+        self.img_about = tk.PhotoImage(data=ABOUT_ICON["data"], format=ABOUT_ICON["format"])
+        self.button_about.configure(default="normal", image=self.img_about, text="About")
+        self.button_about.grid(column="4", row="0", sticky="e")
+        self.button_about.configure(command=self._about)
+        self.frame_action.pack(fill="x", pady="5", side="top")
         self.frame_action.grid_anchor("center")
-        self.frame_action.columnconfigure("1", minsize="120")
+        self.frame_action.columnconfigure("0", uniform="3")
+        self.frame_action.columnconfigure("1", minsize="60")
+        self.frame_action.columnconfigure("2", uniform="3", weight="1")
+        self.frame_action.columnconfigure("3", minsize="60")
 
     def run(self):
         """`run` Runs the UI"""
@@ -231,6 +283,9 @@ class _GuiApp:
         self.dst_path = ""
         self.gui_key = ""
         self.main_window.mainloop()
+
+    def _about(self):
+        self._show_about()
 
     def _disable_buttons(self):
         self.button_detect["state"] = tk.DISABLED
@@ -254,6 +309,13 @@ class _GuiApp:
     def _callback_path_dst(self, _event=None):
         self.dst_path = self.path_dst.entry.get()
         self._set_button_state()
+
+    def _show_about(self):
+        if self.about is None:
+            self.about = _AboutUI(self.window)
+            self.about.run()
+        else:
+            self.about.show()
 
     def _show_dialog(self, title: str, text: str):
         self.dialog_shown = True

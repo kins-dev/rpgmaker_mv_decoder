@@ -106,38 +106,55 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Frame" id="frameAction">
+      <object class="ttk.Frame" id="frame_action">
         <layout manager="pack">
-          <property name="anchor">center</property>
           <property name="fill">x</property>
           <property name="pady">5</property>
           <property name="side">top</property>
         </layout>
         <containerlayout manager="grid">
           <property name="anchor">center</property>
-          <property type="col" id="1" name="minsize">120</property>
+          <property type="col" id="0" name="uniform">3</property>
+          <property type="col" id="1" name="minsize">60</property>
+          <property type="col" id="2" name="uniform">3</property>
+          <property type="col" id="2" name="weight">1</property>
+          <property type="col" id="3" name="minsize">60</property>
         </containerlayout>
         <child>
-          <object class="ttk.Button" id="buttonDecode">
-            <property name="command" type="command" cbtype="simple">decode</property>
+          <object class="ttk.Button" id="button_decode">
+            <property name="command" type="command" cbtype="simple">_decode</property>
             <property name="state">disabled</property>
             <property name="text" translatable="yes">Decode</property>
             <property name="underline">0</property>
             <layout manager="grid">
               <property name="column">0</property>
               <property name="row">0</property>
+              <property name="sticky">w</property>
             </layout>
           </object>
         </child>
         <child>
-          <object class="ttk.Button" id="buttonEncode">
-            <property name="command" type="command" cbtype="simple">encode</property>
+          <object class="ttk.Button" id="button_encode">
+            <property name="command" type="command" cbtype="simple">_encode</property>
             <property name="state">disabled</property>
             <property name="text" translatable="yes">Encode</property>
             <property name="underline">0</property>
             <layout manager="grid">
               <property name="column">2</property>
               <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="button_about">
+            <property name="command" type="command" cbtype="simple">_about</property>
+            <property name="default">normal</property>
+            <property name="image">about.png</property>
+            <property name="text" translatable="yes">About</property>
+            <layout manager="grid">
+              <property name="column">4</property>
+              <property name="row">0</property>
+              <property name="sticky">e</property>
             </layout>
           </object>
         </child>
@@ -220,6 +237,47 @@
           <property name="column">0</property>
           <property name="columnspan">3</property>
           <property name="row">6</property>
+        </layout>
+      </object>
+    </child>
+  </object>
+  <object class="pygubu.builder.widgets.dialog" id="dialog_about">
+    <property name="height">100</property>
+    <property name="resizable">none</property>
+    <property name="title" translatable="yes">About RPGMaker MV Decoder / Encoder</property>
+    <property name="width">200</property>
+    <child>
+      <object class="ttk.Label" id="label_title">
+        <property name="font">TkHeadingFont</property>
+        <property name="justify">left</property>
+        <property name="relief">flat</property>
+        <property name="text" translatable="yes">RPGMaker MV Decoder / Encoder</property>
+        <layout manager="grid">
+          <property name="column">0</property>
+          <property name="padx">5</property>
+          <property name="pady">5</property>
+          <property name="row">0</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Label" id="label_version">
+        <property name="text" translatable="yes">Version: </property>
+        <layout manager="grid">
+          <property name="column">0</property>
+          <property name="padx">5</property>
+          <property name="row">2</property>
+          <property name="sticky">w</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Button" id="button_github">
+        <property name="text" translatable="yes">GitHub</property>
+        <layout manager="grid">
+          <property name="column">0</property>
+          <property name="pady">5</property>
+          <property name="row">5</property>
         </layout>
       </object>
     </child>

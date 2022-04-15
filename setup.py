@@ -23,8 +23,8 @@ setup(
     author_email="scott@kins.dev",
     python_requires=">=3.6",
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
-        "Intended Audience :: Developers",
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: End Users/Desktop",
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
@@ -34,7 +34,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
     ],
-    description="Quickly decode assets for RPG Maker MV, even if you don't have the key",
+    description="Quickly decode or encode assets for RPG Maker MV, even if you don't have the key",
     entry_points={
         "console_scripts": [
             "rpgmaker_mv_decoder=rpgmaker_mv_decoder.cli:main",

@@ -4,11 +4,18 @@ from pprint import pprint
 from typing import Dict
 
 icon: Dict = {}
-with open("assets/icon.png", "rb") as file:
-    icon["format"] = "png"
-    icon["data"] = file.read()
-with open("icon_data.py", "w", encoding="utf-8") as file:
-    file.write("# pylint: skip-file\n")
-    file.write("ICON = ")
-    pprint(icon, file, indent=1)
-    file.write("\n")
+with open("icon_data.py", "w", encoding="utf-8") as output:
+    output.write("# pylint: skip-file\n")
+    output.write("TITLE_BAR_ICON = ")
+    with open("assets/icon.png", "rb") as file:
+        icon["format"] = "png"
+        icon["data"] = file.read()
+    pprint(icon, output, indent=1)
+    output.write("\n")
+    output.write("ABOUT_ICON = ")
+    with open("assets/about.png", "rb") as file:
+        icon["format"] = "png"
+        icon["data"] = file.read()
+
+    pprint(icon, output, indent=1)
+    output.write("\n")
