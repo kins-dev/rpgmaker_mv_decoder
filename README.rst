@@ -16,7 +16,7 @@ RPGMaker MV Decoder v1.0.1
    :alt: v1.0.1 Pylint Status
  
 .. image:: https://img.shields.io/readthedocs/rpgmaker_mv_decoder/v1.0.1?label=v1.0.1%20Documentation&logo=readthedocs
-   :target: https://rpgmaker-mv-decoder.readthedocs.io/en/vrpgmaker_mv_decoder/v1.0.1/
+   :target: https://rpgmaker-mv-decoder.readthedocs.io/en/v1.0.1/
    :alt: Documentation status
 
 
