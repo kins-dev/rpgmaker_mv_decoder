@@ -2,7 +2,13 @@
 History
 =======
 
-1.0.0 (2022-04-14)
+1.0.1 (2022-04-15)
+------------------
+
+* Fixed history file
+* Fixed documentation link
+
+1.0.0 (2022-04-15)
 ------------------
 
 * Added about dialog
