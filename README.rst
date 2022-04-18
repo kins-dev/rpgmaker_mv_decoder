@@ -57,6 +57,16 @@ Example usage
 
    ./gui.py
 
+Running the GUI will give you a window that looks like this.
+
+
+.. image:: https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/main.png
+   :target: https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/main.png
+   :alt: Main Window
+
+
+**Note: Files will be overwitten without warning at this time.**
+
 Help
 ----
 

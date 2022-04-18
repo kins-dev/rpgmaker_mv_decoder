@@ -32,6 +32,12 @@ If you want you can use the [API](https://rpgmaker-mv-decoder.readthedocs.io) in
 ./gui.py
 ```
 
+Running the GUI will give you a window that looks like this.
+
+![Main Window](https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/main.png)
+
+**Note: Files will be overwitten without warning at this time.**
+
 ## Help
 
 You can use the standard `--help` option for full documentation:
