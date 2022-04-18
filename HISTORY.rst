@@ -2,6 +2,11 @@
 History
 =======
 
+1.0.3 (2022-04-18)
+------------------
+
+* Bumping version to fix out of order upload to pypi
+
 1.0.2 (2022-04-15)
 ------------------
 
