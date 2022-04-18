@@ -57,7 +57,7 @@ Example usage
 
    ./gui.py
 
-Running the GUI will give you a window that looks like this.
+The GUI has a fairly simple main window:
 
 
 .. image:: https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/main.png
@@ -66,6 +66,22 @@ Running the GUI will give you a window that looks like this.
 
 
 **Note: Files will be overwitten without warning at this time.**
+
+Progress will be shown while finding the key, decoding the files or encoding the files:
+
+
+.. image:: https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/progress.png
+   :target: https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/progress.png
+   :alt: Progress Dialog
+
+
+Hitting the question mark will bring up the about box, which gives some handy links:
+
+
+.. image:: https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/about.png
+   :target: https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/about.png
+   :alt: About Dialog
+
 
 Help
 ----

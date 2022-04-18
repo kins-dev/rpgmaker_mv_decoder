@@ -32,11 +32,19 @@ If you want you can use the [API](https://rpgmaker-mv-decoder.readthedocs.io) in
 ./gui.py
 ```
 
-Running the GUI will give you a window that looks like this.
+The GUI has a fairly simple main window:
 
 ![Main Window](https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/main.png)
 
 **Note: Files will be overwitten without warning at this time.**
+
+Progress will be shown while finding the key, decoding the files or encoding the files:
+
+![Progress Dialog](https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/progress.png)
+
+Hitting the question mark will bring up the about box, which gives some handy links:
+
+![About Dialog](https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/about.png)
 
 ## Help
 
