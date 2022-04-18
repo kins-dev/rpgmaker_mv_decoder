@@ -6,6 +6,7 @@ History
 ------------------
 
 * Fixing tag issue
+* Fixing release build
 
 1.1.0 (2022-04-18)
 ------------------
