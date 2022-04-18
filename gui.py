@@ -38,8 +38,13 @@ def _format_eta(click_pb: ProgressBar) -> str:
     return ""
 
 
-class _DialogUI(Dialog):
-    """`DialogUI` Dialog box showing progress"""
+def _set_window_icon(window):
+    img_icon = tk.PhotoImage(data=TITLE_BAR_ICON["data"], format=TITLE_BAR_ICON["format"])
+    window.iconphoto(True, img_icon)
+
+
+class _ProgressUI(Dialog):
+    """`_ProgressUI` Dialog box showing progress"""
 
     # pylint: disable=too-many-instance-attributes
 
@@ -51,6 +56,13 @@ class _DialogUI(Dialog):
         self.pos: int = -1
         self.pct: float = -1.0
         self.eta: str = ""
+        _set_window_icon(self.toplevel)
+
+        def disable_event():
+            pass
+
+        self.toplevel.protocol("WM_DELETE_WINDOW", disable_event)
+        self._reset_progress()
 
     def _create_ui(self):
         # build ui
@@ -59,7 +71,7 @@ class _DialogUI(Dialog):
         self.label_working.grid(column="0", columnspan="3", row="0", sticky="w")
         self.progress_bar = ttk.Progressbar(self.toplevel)
         self.progress_bar.configure(
-            length="300", maximum="1492", mode="determinate", orient="horizontal"
+            length="440", maximum="1492", mode="determinate", orient="horizontal"
         )
         self.progress_bar.configure(value="0")
         self.progress_bar.grid(column="0", columnspan="3", row="2")
@@ -73,7 +85,7 @@ class _DialogUI(Dialog):
         self.label_eta.configure(text="")
         self.label_eta.grid(column="2", row="4", sticky="e")
         self.button_cancel = ttk.Button(self.toplevel)
-        self.button_cancel.configure(text="Cancel")
+        self.button_cancel.configure(takefocus=True, text="Cancel", underline="0")
         self.button_cancel.grid(column="0", columnspan="3", row="6")
         self.button_cancel.configure(command=self._cancel)
         self.toplevel.configure(height="100", padx="10", pady="10")
@@ -83,12 +95,7 @@ class _DialogUI(Dialog):
         self.toplevel.rowconfigure("1", minsize="10")
         self.toplevel.rowconfigure("3", minsize="5")
         self.toplevel.rowconfigure("5", minsize="10")
-
-        def disable_event():
-            pass
-
-        self.toplevel.protocol("WM_DELETE_WINDOW", disable_event)
-        self._reset_progress()
+        _set_window_icon(self.toplevel)
 
     def _cancel(self):
         self.is_canceled = True
@@ -157,45 +164,69 @@ class _DialogUI(Dialog):
         return self.is_canceled
 
 
-def _open_github():
-    url = "https://git.kins.dev/rpgmaker_mv_decoder"
-    webbrowser.open(url, new=0, autoraise=True)
-
-
 class _AboutUI(Dialog):
+    # pylint: disable=too-many-instance-attributes,too-few-public-methods
     def __init__(self, parent):
+        self.button_github = None
+        self.button_pypi = None
+        self.button_documentation = None
         super().__init__(parent, modal=True)
+        self.url_github = "https://git.kins.dev/rpgmaker_mv_decoder"
+        self.url_pypi = "https://pypi.org/project/rpgmaker-mv-decoder/"
+        self.url_docs = "https://rpgmaker-mv-decoder.readthedocs.io/"
+        _set_window_icon(self.toplevel)
 
     def _create_ui(self):
         # build ui
         self.label_title = ttk.Label(self.toplevel)
         self.label_title.configure(
-            font="TkHeadingFont",
-            justify="left",
+            font="TkCaptionFont",
+            justify="center",
             relief="flat",
             text="RPGMaker MV Decoder / Encoder",
         )
-        self.label_title.grid(column="0", padx="5", pady="5", row="0")
+        self.label_title.grid(column="0", columnspan="3", padx="5", pady="5", row="0")
         self.label_version = ttk.Label(self.toplevel)
         self.label_version.configure(
+            font="TkSmallCaptionFont",
             text=f"""Version: {rpgmaker_mv_decoder.__version__}
 
-Copyright 2022 by Scott@kins.dev
-All rights reserved
+Copyright © 2022 by Scott@kins.dev. All rights reserved.
 
-See GitHub for license information
-"""
+Released under the MIT license. See GitHub for more details.
+""",
         )
-        self.label_version.grid(column="0", padx="5", row="2", sticky="w")
-        self.button_github = ttk.Button(self.toplevel)
-        self.button_github.configure(text="GitHub")
-        self.button_github.grid(column="0", pady="5", row="5")
-        self.button_github.configure(command=_open_github)
+        self.label_version.grid(column="0", columnspan="3", padx="5", row="2", sticky="w")
+        self._configure_buttons()
         self.toplevel.configure(height="100", width="200")
         self.toplevel.resizable(False, False)
         self.toplevel.title("About RPGMaker MV Decoder / Encoder")
-        self.img_icon = tk.PhotoImage(data=TITLE_BAR_ICON["data"], format=TITLE_BAR_ICON["format"])
-        self.toplevel.iconphoto(True, self.img_icon)
+        self.toplevel.columnconfigure("0", minsize="152")
+        self.toplevel.columnconfigure("1", minsize="152")
+        self.toplevel.columnconfigure("2", minsize="152")
+
+    def _configure_buttons(self):
+        self.button_github = ttk.Button(self.toplevel)
+        self.button_github.configure(text="GitHub", underline="0")
+        self.button_github.grid(column="0", pady="5", row="5")
+        self.button_github.configure(command=self._website_github)
+        self.button_documentation = ttk.Button(self.toplevel)
+        self.button_documentation.configure(text="Documentation", underline="0")
+        self.button_documentation.grid(column="2", row="5")
+        self.button_documentation.configure(command=self._website_docs)
+        self.button_pypi = ttk.Button(self.toplevel)
+        self.button_pypi.configure(text="PyPi", underline="0")
+        self.button_pypi.grid(column="1", row="5")
+        self.button_pypi.configure(command=self._website_pypi)
+
+    def _website_github(self):
+        webbrowser.open(self.url_github, new=0, autoraise=True)
+
+    def _website_docs(self):
+        webbrowser.open(self.url_docs, new=0, autoraise=True)
+
+    def _website_pypi(self):
+        webbrowser.open(self.url_pypi, new=0, autoraise=True)
 
 
 class _GuiApp:
@@ -203,33 +234,16 @@ class _GuiApp:
     def __init__(self, master=None):
         # build ui
         self.window = tk.Tk() if master is None else tk.Toplevel(master)
-        self._setup_path_dialogs()
-        self.checkbox_detect_ext = ttk.Checkbutton(self.frame_opt)
-        self.detect_file_ext = tk.StringVar(value="")
-        self.checkbox_detect_ext.configure(
-            text="Detect File Extensions", underline="7", variable=self.detect_file_ext
-        )
-        self.checkbox_detect_ext.grid(column="0", columnspan="3", row="0", sticky="w")
-        self.entry_key = ttk.Entry(self.frame_opt)
-        self.gui_key = ""
-        self.entry_key.configure(state="normal", validate="all", width="32")
-        self.entry_key.grid(column="0", row="1", sticky="w")
-        _validatecmd = (self.entry_key.register(self._validate_text), "%P")
-        self.entry_key.configure(validatecommand=_validatecmd)
-        self.button_detect = ttk.Button(self.frame_opt)
-        self.button_detect.configure(state="disabled", text="Detect Key", underline="7")
-        self.button_detect.grid(column="2", row="1", sticky="e")
-        self.button_detect.configure(command=self._detect)
-        self.frame_opt.configure(padding="10", text="Options")
-        self.frame_opt.pack(side="top")
-        self.frame_opt.columnconfigure("1", minsize="10")
-        self._setup_action_frame()
-        self.window.configure(padx="10", pady="5")
-        self.img_icon = tk.PhotoImage(data=TITLE_BAR_ICON["data"], format=TITLE_BAR_ICON["format"])
-        self.window.iconphoto(True, self.img_icon)
-        self.window.title("RPGMaker MV Decoder / Encoder")
+        self._build_frame_src()
+        self._build_frame_key()
+        self._build_frame_dst()
+        self._build_frame_opt()
+        self._build_frame_act()
+        _set_window_icon(self.window)
+        self.window.title(f"RPGMaker MV Decoder / Encoder v{rpgmaker_mv_decoder.__version__}")
+        self.window.configure(height="200", padx="10", pady="5", width="500")
         self.window.resizable(0, 0)
-        self.dialog = _DialogUI(self.window)
+        self.dialog = _ProgressUI(self.window)
         self.about = _AboutUI(self.window)
 
         # Main widget
@@ -237,25 +251,9 @@ class _GuiApp:
         self.dialog_shown: bool = False
         self.src_path = ""
         self.dst_path = ""
+        self.gui_key = ""
 
-    def _setup_path_dialogs(self):
-        self.frame_src = ttk.Labelframe(self.window)
-        self.path_src = PathChooserInput(self.frame_src)
-        self.path_src.configure(mustexist="true", title="Source Directory", type="directory")
-        self.path_src.pack(expand="true", fill="x", side="top")
-        self.path_src.bind("<<PathChooserPathChanged>>", self._callback_path_src, add="")
-        self.frame_src.configure(padding="5", text="Source Directory")
-        self.frame_src.pack(expand="true", fill="x", side="top")
-        self.frame_dst = ttk.Labelframe(self.window)
-        self.path_dst = PathChooserInput(self.frame_dst)
-        self.path_dst.configure(mustexist="true", title="Destination Directory", type="directory")
-        self.path_dst.pack(expand="true", fill="x", side="top")
-        self.path_dst.bind("<<PathChooserPathChanged>>", self._callback_path_dst, add="")
-        self.frame_dst.configure(padding="5", text="Destination Directory")
-        self.frame_dst.pack(expand="true", fill="x", side="top")
-        self.frame_opt = ttk.Labelframe(self.window)
-
-    def _setup_action_frame(self):
+    def _build_frame_act(self):
         self.frame_action = ttk.Frame(self.window)
         self.button_decode = ttk.Button(self.frame_action)
         self.button_decode.configure(state="disabled", text="Decode", underline="0")
@@ -270,12 +268,57 @@ class _GuiApp:
         self.button_about.configure(default="normal", image=self.img_about, text="About")
         self.button_about.grid(column="4", row="0", sticky="e")
         self.button_about.configure(command=self._about)
+        self.frame_action.configure(height="0", width="0")
         self.frame_action.pack(fill="x", pady="5", side="top")
-        self.frame_action.grid_anchor("center")
         self.frame_action.columnconfigure("0", uniform="3")
         self.frame_action.columnconfigure("1", minsize="60")
         self.frame_action.columnconfigure("2", uniform="3", weight="1")
         self.frame_action.columnconfigure("3", minsize="60")
+
+    def _build_frame_opt(self):
+        self.frame_options = ttk.Labelframe(self.window)
+        self.checkbox_detect_ext = ttk.Checkbutton(self.frame_options)
+        self.detect_file_ext = tk.StringVar(value="")
+        self.checkbox_detect_ext.configure(
+            text="Detect File Extensions", underline="7", variable=self.detect_file_ext
+        )
+        self.checkbox_detect_ext.grid(column="0", columnspan="3", row="0", sticky="w")
+        self.frame_options.configure(height="0", padding="10", text="Decoding Options:", width="0")
+        self.frame_options.pack(fill="x", pady="5", side="top")
+        self.frame_options.columnconfigure("1", minsize="10")
+
+    def _build_frame_dst(self):
+        self.frame_dst = ttk.Labelframe(self.window)
+        self.path_dst = PathChooserInput(self.frame_dst)
+        self.path_dst.configure(mustexist="true", title="Destination Directory", type="directory")
+        self.path_dst.pack(expand="true", fill="x", side="top")
+        self.path_dst.bind("<<PathChooserPathChanged>>", self._callback_path_dst, add="")
+        self.frame_dst.configure(padding="5", text="Destination Directory:")
+        self.frame_dst.pack(expand="true", fill="x", side="top")
+
+    def _build_frame_key(self):
+        self.frame_key = ttk.Labelframe(self.window)
+        self.entry_key = ttk.Entry(self.frame_key)
+        self.entry_key.configure(font="TkFixedFont", state="normal", validate="all", width="32")
+        self.entry_key.grid(column="0", padx="5", pady="5", row="0", sticky="w")
+        _validatecmd = (self.entry_key.register(self._validate_text), "%P")
+        self.entry_key.configure(validatecommand=_validatecmd)
+        self.button_detect = ttk.Button(self.frame_key)
+        self.button_detect.configure(state="disabled", text="Detect Key", underline="7")
+        self.button_detect.grid(column="1", padx="5", pady="5", row="0", sticky="w")
+        self.button_detect.configure(command=self._detect)
+        self.frame_key.configure(height="0", text="Encoding / Decoding Key:", width="0")
+        self.frame_key.pack(fill="x", ipadx="5", pady="5", side="top")
+        self.frame_key.columnconfigure("1", minsize="160")
+
+    def _build_frame_src(self):
+        self.frame_src = ttk.Labelframe(self.window)
+        self.path_src = PathChooserInput(self.frame_src)
+        self.path_src.configure(mustexist="true", title="Source Directory", type="directory")
+        self.path_src.pack(expand="true", fill="x", side="top")
+        self.path_src.bind("<<PathChooserPathChanged>>", self._callback_path_src, add="")
+        self.frame_src.configure(height="200", padding="5", text="Source Directory:", width="0")
+        self.frame_src.pack(expand="true", fill="x", side="top")
 
     def run(self):
         """`run` Runs the UI"""
@@ -320,7 +363,7 @@ class _GuiApp:
     def _show_dialog(self, title: str, text: str):
         self.dialog_shown = True
         if self.dialog is None:
-            self.dialog = _DialogUI(self.window)
+            self.dialog = _ProgressUI(self.window)
             self.dialog.set_title(title)
             self.dialog.set_label(text)
             self.dialog.run()

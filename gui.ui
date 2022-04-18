@@ -1,26 +1,31 @@
 <?xml version='1.0' encoding='utf-8'?>
 <interface version="1.2">
-  <object class="tk.Toplevel" id="Window">
+  <object class="tk.Toplevel" id="window">
+    <property name="height">200</property>
     <property name="iconbitmap">icon.png</property>
     <property name="iconphoto">icon.png</property>
     <property name="padx">10</property>
     <property name="pady">5</property>
-    <property name="title" translatable="yes">RPGMaker MV Decoder</property>
+    <property name="resizable">none</property>
+    <property name="title" translatable="yes">RPGMaker MV Decoder / Encoder v{rpgmaker_mv_decoder.__version__}</property>
+    <property name="width">500</property>
     <child>
-      <object class="ttk.Labelframe" id="frameSrc">
+      <object class="ttk.Labelframe" id="frame_src">
+        <property name="height">200</property>
         <property name="padding">5</property>
-        <property name="text" translatable="yes">Source Directory</property>
+        <property name="text" translatable="yes">Source Directory:</property>
+        <property name="width">0</property>
         <layout manager="pack">
           <property name="expand">true</property>
           <property name="fill">x</property>
           <property name="side">top</property>
         </layout>
         <child>
-          <object class="pygubu.builder.widgets.pathchooserinput" id="pathSrc">
+          <object class="pygubu.builder.widgets.pathchooserinput" id="path_src">
             <property name="mustexist">true</property>
             <property name="title" translatable="yes">Source Directory</property>
             <property name="type">directory</property>
-            <bind sequence="&lt;&lt;PathChooserPathChanged&gt;&gt;" handler="callbackPathSrc" add="" />
+            <bind sequence="&lt;&lt;PathChooserPathChanged&gt;&gt;" handler="_callback_path_src" add="" />
             <layout manager="pack">
               <property name="expand">true</property>
               <property name="fill">x</property>
@@ -31,20 +36,67 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Labelframe" id="frameDst">
+      <object class="ttk.Labelframe" id="frame_key">
+        <property name="height">0</property>
+        <property name="text" translatable="yes">Encoding / Decoding Key:</property>
+        <property name="width">0</property>
+        <layout manager="pack">
+          <property name="fill">x</property>
+          <property name="ipadx">5</property>
+          <property name="pady">5</property>
+          <property name="side">top</property>
+        </layout>
+        <containerlayout manager="grid">
+          <property type="col" id="1" name="minsize">160</property>
+        </containerlayout>
+        <child>
+          <object class="ttk.Entry" id="entry_key">
+            <property name="font">TkFixedFont</property>
+            <property name="state">normal</property>
+            <property name="validate">all</property>
+            <property name="validatecommand" type="command" cbtype="entry_validate" args="%P">_validate_text</property>
+            <property name="width">32</property>
+            <layout manager="grid">
+              <property name="column">0</property>
+              <property name="padx">5</property>
+              <property name="pady">5</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="button_detect">
+            <property name="command" type="command" cbtype="simple">_detect</property>
+            <property name="state">disabled</property>
+            <property name="text" translatable="yes">Detect Key</property>
+            <property name="underline">7</property>
+            <layout manager="grid">
+              <property name="column">1</property>
+              <property name="padx">5</property>
+              <property name="pady">5</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Labelframe" id="frame_dst">
         <property name="padding">5</property>
-        <property name="text" translatable="yes">Destination Directory</property>
+        <property name="text" translatable="yes">Destination Directory:</property>
         <layout manager="pack">
           <property name="expand">true</property>
           <property name="fill">x</property>
           <property name="side">top</property>
         </layout>
         <child>
-          <object class="pygubu.builder.widgets.pathchooserinput" id="pathDst">
+          <object class="pygubu.builder.widgets.pathchooserinput" id="path_dst">
             <property name="mustexist">true</property>
             <property name="title" translatable="yes">Destination Directory</property>
             <property name="type">directory</property>
-            <bind sequence="&lt;&lt;PathChooserPathChanged&gt;&gt;" handler="callbackPathDst" add="" />
+            <bind sequence="&lt;&lt;PathChooserPathChanged&gt;&gt;" handler="_callback_path_dst" add="" />
             <layout manager="pack">
               <property name="expand">true</property>
               <property name="fill">x</property>
@@ -55,20 +107,24 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Labelframe" id="frameOpt">
+      <object class="ttk.Labelframe" id="frame_options">
+        <property name="height">0</property>
         <property name="padding">10</property>
-        <property name="text" translatable="yes">Options</property>
+        <property name="text" translatable="yes">Decoding Options:</property>
+        <property name="width">0</property>
         <layout manager="pack">
+          <property name="fill">x</property>
+          <property name="pady">5</property>
           <property name="side">top</property>
         </layout>
         <containerlayout manager="grid">
           <property type="col" id="1" name="minsize">10</property>
         </containerlayout>
         <child>
-          <object class="ttk.Checkbutton" id="checkboxDetectExt">
+          <object class="ttk.Checkbutton" id="checkbox_detect_ext">
             <property name="text" translatable="yes">Detect File Extensions</property>
             <property name="underline">7</property>
-            <property name="variable">string:detectFileExt</property>
+            <property name="variable">string:detect_file_ext</property>
             <layout manager="grid">
               <property name="column">0</property>
               <property name="columnspan">3</property>
@@ -77,43 +133,18 @@
             </layout>
           </object>
         </child>
-        <child>
-          <object class="ttk.Entry" id="entryKey">
-            <property name="state">normal</property>
-            <property name="validate">all</property>
-            <property name="validatecommand" type="command" cbtype="entry_validate" args="%P">checkText</property>
-            <property name="width">32</property>
-            <layout manager="grid">
-              <property name="column">0</property>
-              <property name="row">1</property>
-              <property name="sticky">w</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="ttk.Button" id="buttonDetect">
-            <property name="command" type="command" cbtype="simple">detect</property>
-            <property name="state">disabled</property>
-            <property name="text" translatable="yes">Detect Key</property>
-            <property name="underline">7</property>
-            <layout manager="grid">
-              <property name="column">2</property>
-              <property name="row">1</property>
-              <property name="sticky">e</property>
-            </layout>
-          </object>
-        </child>
       </object>
     </child>
     <child>
       <object class="ttk.Frame" id="frame_action">
+        <property name="height">0</property>
+        <property name="width">0</property>
         <layout manager="pack">
           <property name="fill">x</property>
           <property name="pady">5</property>
           <property name="side">top</property>
         </layout>
         <containerlayout manager="grid">
-          <property name="anchor">center</property>
           <property type="col" id="0" name="uniform">3</property>
           <property type="col" id="1" name="minsize">60</property>
           <property type="col" id="2" name="uniform">3</property>
@@ -151,6 +182,7 @@
             <property name="default">normal</property>
             <property name="image">about.png</property>
             <property name="text" translatable="yes">About</property>
+            <bind sequence="" handler="" add="" />
             <layout manager="grid">
               <property name="column">4</property>
               <property name="row">0</property>
@@ -161,7 +193,7 @@
       </object>
     </child>
   </object>
-  <object class="pygubu.builder.widgets.dialog" id="dialogWorking">
+  <object class="pygubu.builder.widgets.dialog" id="dialog_working">
     <property name="container">false</property>
     <property name="height">100</property>
     <property name="modal">true</property>
@@ -176,7 +208,7 @@
       <property type="row" id="5" name="minsize">10</property>
     </containerlayout>
     <child>
-      <object class="ttk.Label" id="labelWorking">
+      <object class="ttk.Label" id="label_working">
         <property name="text" translatable="yes">Please wait...</property>
         <layout manager="grid">
           <property name="column">0</property>
@@ -187,8 +219,8 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Progressbar" id="progressbar1">
-        <property name="length">300</property>
+      <object class="ttk.Progressbar" id="progress_bar">
+        <property name="length">440</property>
         <property name="maximum">1492</property>
         <property name="mode">determinate</property>
         <property name="orient">horizontal</property>
@@ -201,7 +233,7 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Label" id="labelPct">
+      <object class="ttk.Label" id="label_pct">
         <property name="text" translatable="yes">0%</property>
         <layout manager="grid">
           <property name="column">0</property>
@@ -211,7 +243,7 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Label" id="labelCnt">
+      <object class="ttk.Label" id="label_cnt">
         <property name="text" translatable="yes">0/0</property>
         <layout manager="grid">
           <property name="column">1</property>
@@ -220,7 +252,7 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Label" id="labelETA">
+      <object class="ttk.Label" id="label_eta">
         <property name="text" translatable="yes">ETA: 0s</property>
         <layout manager="grid">
           <property name="column">2</property>
@@ -230,9 +262,11 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Button" id="buttonCancel">
-        <property name="command" type="command" cbtype="simple">cancel</property>
+      <object class="ttk.Button" id="button_cancel">
+        <property name="command" type="command" cbtype="simple">_cancel</property>
+        <property name="takefocus">true</property>
         <property name="text" translatable="yes">Cancel</property>
+        <property name="underline">0</property>
         <layout manager="grid">
           <property name="column">0</property>
           <property name="columnspan">3</property>
@@ -246,14 +280,20 @@
     <property name="resizable">none</property>
     <property name="title" translatable="yes">About RPGMaker MV Decoder / Encoder</property>
     <property name="width">200</property>
+    <containerlayout manager="grid">
+      <property type="col" id="0" name="minsize">152</property>
+      <property type="col" id="1" name="minsize">152</property>
+      <property type="col" id="2" name="minsize">152</property>
+    </containerlayout>
     <child>
       <object class="ttk.Label" id="label_title">
-        <property name="font">TkHeadingFont</property>
-        <property name="justify">left</property>
+        <property name="font">TkCaptionFont</property>
+        <property name="justify">center</property>
         <property name="relief">flat</property>
         <property name="text" translatable="yes">RPGMaker MV Decoder / Encoder</property>
         <layout manager="grid">
           <property name="column">0</property>
+          <property name="columnspan">3</property>
           <property name="padx">5</property>
           <property name="pady">5</property>
           <property name="row">0</property>
@@ -262,9 +302,16 @@
     </child>
     <child>
       <object class="ttk.Label" id="label_version">
-        <property name="text" translatable="yes">Version: </property>
+        <property name="font">TkSmallCaptionFont</property>
+        <property name="text" translatable="yes">Version: {rpgmaker_mv_decoder.__version__}
+
+Copyright © 2022 by Scott@kins.dev. All rights reserved.
+
+Released under the MIT license. See GitHub for more details.
+</property>
         <layout manager="grid">
           <property name="column">0</property>
+          <property name="columnspan">3</property>
           <property name="padx">5</property>
           <property name="row">2</property>
           <property name="sticky">w</property>
@@ -273,10 +320,34 @@
     </child>
     <child>
       <object class="ttk.Button" id="button_github">
+        <property name="command" type="command" cbtype="simple">_website_github</property>
         <property name="text" translatable="yes">GitHub</property>
+        <property name="underline">0</property>
         <layout manager="grid">
           <property name="column">0</property>
           <property name="pady">5</property>
+          <property name="row">5</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Button" id="button_documentation">
+        <property name="command" type="command" cbtype="simple">_website_docs</property>
+        <property name="text" translatable="yes">Documentation</property>
+        <property name="underline">0</property>
+        <layout manager="grid">
+          <property name="column">2</property>
+          <property name="row">5</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Button" id="button_pypi">
+        <property name="command" type="command" cbtype="simple">_website_pypi</property>
+        <property name="text" translatable="yes">PyPi</property>
+        <property name="underline">0</property>
+        <layout manager="grid">
+          <property name="column">1</property>
           <property name="row">5</property>
         </layout>
       </object>
