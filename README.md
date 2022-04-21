@@ -36,8 +36,6 @@ The GUI has a fairly simple main window:
 
 ![Main Window](https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/main.png)
 
-**Note: Files will be overwitten without warning at this time.**
-
 Progress will be shown while finding the key, decoding the files or encoding the files:
 
 ![Progress Dialog](https://raw.githubusercontent.com/kins-dev/rpgmaker_mv_decoder/main/docs/_static/screenshots/progress.png)

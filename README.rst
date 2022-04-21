@@ -65,8 +65,6 @@ The GUI has a fairly simple main window:
    :alt: Main Window
 
 
-**Note: Files will be overwitten without warning at this time.**
-
 Progress will be shown while finding the key, decoding the files or encoding the files:
 
 
