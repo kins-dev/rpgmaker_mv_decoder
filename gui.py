@@ -4,7 +4,8 @@ import pathlib
 import threading
 import tkinter as tk
 import webbrowser
-from tkinter import ttk
+from tkinter import messagebox, ttk
+from typing import Dict
 
 from click._termui_impl import ProgressBar
 from pygubu.widgets.dialog import Dialog
@@ -282,7 +283,7 @@ class _GuiApp:
         self.checkbox_detect_ext.configure(
             text="Detect File Extensions", underline="7", variable=self.detect_file_ext
         )
-        self.checkbox_detect_ext.grid(column="0", columnspan="3", row="0", sticky="w")
+        self.checkbox_detect_ext.grid(column="0", row="0", sticky="w")
         self.checkbox_overwrite = ttk.Checkbutton(self.frame_options)
         self.overwrite = tk.StringVar(value="")
         self.checkbox_overwrite.configure(
@@ -439,6 +440,7 @@ class _GuiApp:
                 self.entry_key.get(),
                 self.detect_file_ext.get() == "1",
                 self.dialog.set_progress,
+                self._overwrite_cb,
             )
             self._hide_dialog()
             self._set_button_state()
@@ -458,12 +460,31 @@ class _GuiApp:
                 self.dst_path,
                 self.entry_key.get(),
                 self.dialog.set_progress,
+                self._overwrite_cb,
             )
             self._hide_dialog()
             self._set_button_state()
 
         threading.Thread(target=_encode_files).start()
         self._disable_buttons()
+
+    def _overwrite_cb(self, filename: str) -> bool:
+        options: Dict[str, str] = {}
+        if self.overwrite.get() == "1":
+            return (True, True)
+        options["icon"] = messagebox.WARNING
+        options["type"] = messagebox.YESNOCANCEL
+        options["title"] = "Overwriting files"
+        options[
+            "message"
+        ] = f"""The file:
+    {filename}
+Is about to be overwritten. Do you want to do this?"""
+        ret = messagebox.Message(**options).show()
+        ret = str(ret)
+        if ret == messagebox.CANCEL:
+            return None
+        return ret == messagebox.YES
 
 
 if __name__ == "__main__":

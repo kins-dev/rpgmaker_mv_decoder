@@ -27,7 +27,8 @@
         "todos",
         "uiaccess",
         "virtualenv",
-        "virtualenvwrapper"
+        "virtualenvwrapper",
+        "YESNOCANCEL"
     ],
     "esbonio.server.enabled": true,
     "esbonio.sphinx.confDir": "${workspaceFolder}/docs",

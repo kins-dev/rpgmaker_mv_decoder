@@ -5,6 +5,7 @@ import struct
 import sys
 from binascii import crc32
 from pathlib import Path, PurePath
+from time import sleep
 from tkinter.ttk import Progressbar
 from typing import Callable, Dict, List, Tuple
 from uuid import UUID, uuid4
@@ -296,7 +297,7 @@ def decode_files(
     key: str,
     detect_type: bool,
     pb_cb: Callable[[Progressbar], bool] = None,
-    overwrite_callback: Callable[[str], Tuple[bool, bool]] = None,
+    overwrite_callback: Callable[[str], bool] = None,
 ) -> None:
     """`decode_files` Decodes the files
 
@@ -310,10 +311,9 @@ def decode_files(
     - `pb_cb` (`Callable[[click._termui_impl.Progressbar], bool]`, optional): Callback to\
     display current progress. Call with `None` when bar is complete. Returns `True` if the\
     user has canceled the operation. Defaults to `None`.
-    - `overwrite_callback` (`Callable[[str], Tuple[bool, bool]]`, optional): Callback to\
-    use if files are about to be overwritten. Call with the filename in question. First bool\
-    of the return is if the operation should continue, second is if the file should be\
-    overwritten. Defaults to `None`.
+    - `overwrite_callback` (`Callable[[str], bool`, optional): Callback to use if files are\
+    about to be overwritten. Call with the filename in question. `None` indicates user has\
+    canceled the operation. Returns if the file should be overwritten. Defaults to `None`.
     """
     # pylint: disable=too-many-locals
     source_dir = Path(src).resolve()
@@ -328,9 +328,8 @@ def decode_files(
     with click.progressbar(files, label="Decoding files") as all_files:
         filename: Path
         for filename in all_files:
-            if pb_cb is not None:
-                if pb_cb(all_files):
-                    break
+            if pb_cb and pb_cb(all_files):
+                break
             output_file: PurePath = destination.joinpath(PurePath(filename).relative_to(source))
             result: bytes
             with click.open_file(filename, "rb") as file:
@@ -353,8 +352,9 @@ def decode_files(
                     continue
             else:
                 output_file = _get_std_ext(output_file)
-            _save_file(output_file, result, overwrite_callback)
-    if pb_cb is not None:
+            if not _save_file(output_file, result, overwrite_callback):
+                break
+    if pb_cb:
         pb_cb(None)
 
 
@@ -363,7 +363,7 @@ def encode_files(
     dst: str,
     key: str,
     pb_cb: Callable[[Progressbar], bool] = None,
-    overwrite_callback: Callable[[str], Tuple[bool, bool]] = None,
+    overwrite_callback: Callable[[str], bool] = None,
 ) -> None:
     """`encode_files` Encodes the files
 
@@ -376,10 +376,9 @@ def encode_files(
     - `pb_cb` (`Callable[[click._termui_impl.Progressbar], bool]`, optional): Callback to\
     display current progress. Call with `None` when bar is complete. Returns `True` if the\
     user has canceled the operation. Defaults to `None`.
-    - `overwrite_callback` (`Callable[[str], Tuple[bool, bool]]`, optional): Callback to\
-    use if files are about to be overwritten. Call with the filename in question. First bool\
-    of the return is if the operation should continue, second is if the file should be\
-    overwritten. Defaults to `None`.
+    - `overwrite_callback` (`Callable[[str], bool`, optional): Callback to use if files are\
+    about to be overwritten. Call with the filename in question. `None` indicates user has\
+    canceled the operation. Returns if the file should be overwritten. Defaults to `None`.
     """
     # pylint: disable=too-many-locals
     source_dir = Path(src).resolve()
@@ -409,7 +408,8 @@ def encode_files(
                 output_file = output_file.with_suffix(".rpgmvp")
             elif filetype.startswith("audio"):
                 output_file = output_file.with_suffix(".rpgmvp")
-            _save_file(output_file, data, overwrite_callback)
+            if not _save_file(output_file, data, overwrite_callback):
+                break
     if pb_cb is not None:
         pb_cb(None)
 
@@ -425,13 +425,14 @@ def _get_std_ext(output_file):
 def _save_file(
     output_file: PurePath,
     result,
-    overwrite_callback: Callable[[str], Tuple[bool, bool]] = None,
+    overwrite_callback: Callable[[str], bool] = None,
 ) -> bool:
     overwrite: bool = True
-    keep_going: bool = True
+    # needed to prevent UI deadlock
+    sleep(0.01)
     if overwrite_callback and os.path.exists(output_file):
-        (keep_going, overwrite) = overwrite_callback(output_file)
-    if not keep_going:
+        overwrite = overwrite_callback(output_file.name)
+    if overwrite is None:
         return False
     if not overwrite:
         return True
