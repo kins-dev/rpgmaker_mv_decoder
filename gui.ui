@@ -110,15 +110,16 @@
       <object class="ttk.Labelframe" id="frame_options">
         <property name="height">0</property>
         <property name="padding">10</property>
-        <property name="text" translatable="yes">Decoding Options:</property>
+        <property name="text" translatable="yes">Options:</property>
         <property name="width">0</property>
         <layout manager="pack">
+          <property name="expand">true</property>
           <property name="fill">x</property>
           <property name="pady">5</property>
           <property name="side">top</property>
         </layout>
         <containerlayout manager="grid">
-          <property type="col" id="1" name="minsize">10</property>
+          <property type="col" id="1" name="minsize">120</property>
         </containerlayout>
         <child>
           <object class="ttk.Checkbutton" id="checkbox_detect_ext">
@@ -127,9 +128,19 @@
             <property name="variable">string:detect_file_ext</property>
             <layout manager="grid">
               <property name="column">0</property>
-              <property name="columnspan">3</property>
               <property name="row">0</property>
               <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Checkbutton" id="checkbox_overwrite">
+            <property name="text" translatable="yes">Overwrite Files</property>
+            <property name="underline">0</property>
+            <property name="variable">string:overwrite</property>
+            <layout manager="grid">
+              <property name="column">2</property>
+              <property name="row">0</property>
             </layout>
           </object>
         </child>
@@ -180,7 +191,6 @@
           <object class="ttk.Button" id="button_about">
             <property name="command" type="command" cbtype="simple">_about</property>
             <property name="default">normal</property>
-            <property name="image">about.png</property>
             <property name="text" translatable="yes">About</property>
             <bind sequence="" handler="" add="" />
             <layout manager="grid">

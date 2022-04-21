@@ -283,9 +283,15 @@ class _GuiApp:
             text="Detect File Extensions", underline="7", variable=self.detect_file_ext
         )
         self.checkbox_detect_ext.grid(column="0", columnspan="3", row="0", sticky="w")
-        self.frame_options.configure(height="0", padding="10", text="Decoding Options:", width="0")
-        self.frame_options.pack(fill="x", pady="5", side="top")
-        self.frame_options.columnconfigure("1", minsize="10")
+        self.checkbox_overwrite = ttk.Checkbutton(self.frame_options)
+        self.overwrite = tk.StringVar(value="")
+        self.checkbox_overwrite.configure(
+            text="Overwrite Files", underline="0", variable=self.overwrite
+        )
+        self.checkbox_overwrite.grid(column="2", row="0")
+        self.frame_options.configure(height="0", padding="10", text="Options:", width="0")
+        self.frame_options.pack(expand="true", fill="x", pady="5", side="top")
+        self.frame_options.columnconfigure("1", minsize="120")
 
     def _build_frame_dst(self):
         self.frame_dst = ttk.Labelframe(self.window)
