@@ -173,29 +173,25 @@ def guess_at_key(src: Path, callbacks: Callback = Callback()) -> str:
     keys: Dict[str, int] = {}
     count: int
     with click.progressbar(files, label="Finding key") as all_files:
-        count = _handle_files(callbacks.progressbar, keys, all_files)
-    callbacks.progressbar(None)
+        count = _handle_files(callbacks, keys, all_files)
 
     if count == 0:
         raise NoValidFilesFound(f"No png files found under: '{Path}'")
     return __get_likely_key(keys, count)
 
 
-def _handle_files(pb_cb, keys, all_files: ProgressBar) -> int:
-    skipped: bool = False
-    min_found: int = max(10, all_files.length // 20)
+def _handle_files(callbacks: Callback, keys: Dict[str, int], all_files: ProgressBar) -> int:
+    min_found: int = max(9, all_files.length // 20) + 1
     filename: Path
     count: int = 0
+    checked: int = 0
     item: bytes = None
     for filename in all_files:
-        if pb_cb is not None:
-            if pb_cb(all_files):
-                break
-        if skipped or (count >= min_found and item is not None and keys[item] == count):
-            skipped = True
-            # move the progress bar to 100%
-            continue
+        if callbacks.progressbar(all_files):
+            break
+
         with click.open_file(filename, "rb") as file:
+            checked += 1
             try:
                 item = read_header_and_decode(file.read(32), png_ihdr_data=file.read(17)).hex()
             except RPGMakerHeaderError as exception:
@@ -209,8 +205,12 @@ def _handle_files(pb_cb, keys, all_files: ProgressBar) -> int:
                 continue
             count += 1
             _update_key_dict(keys, item)
-    if skipped:
-        _report_results(all_files, count, item)
+            if len(keys) == 1 and count >= min_found:
+                all_files.update(all_files.length - count)
+                _report_results(all_files, count, checked, item)
+                break
+
+    callbacks.progressbar(None)
     return count
 
 
@@ -221,9 +221,11 @@ def _update_key_dict(keys, item):
         keys[item] = 1
 
 
-def _report_results(all_files: ProgressBar, count, item):
+def _report_results(all_files: ProgressBar, count: int, checked: int, item):
+    files_skipped: int = checked - count
     percentage: float = (count * 100.0) / all_files.length
     click.echo(None)
+    click.echo(f"Found {files_skipped} files ending with .rpgmvp that were not PNG images")
     click.echo(
         f"Calculated the same key for {count}/{all_files.length} ({percentage:0.02f}%) files"
     )
