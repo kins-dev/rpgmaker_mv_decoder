@@ -2,6 +2,17 @@
 History
 =======
 
+1.2.1 (2022-04-26)
+------------------
+
+* Fixed history
+* Callback class to make life easier internally
+
+1.2.0 (2022-04-21)
+------------------
+
+* Added overwrite handling in the GUI
+
 1.1.1 (2022-04-18)
 ------------------
 

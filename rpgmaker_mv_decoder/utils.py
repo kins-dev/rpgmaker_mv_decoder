@@ -6,7 +6,6 @@ import sys
 from binascii import crc32
 from pathlib import Path, PurePath
 from time import sleep
-from tkinter.ttk import Progressbar
 from typing import Callable, Dict, List, Tuple
 from uuid import UUID, uuid4
 
@@ -14,6 +13,7 @@ import click
 import magic
 from click._termui_impl import ProgressBar
 
+from rpgmaker_mv_decoder.callback import Callback
 from rpgmaker_mv_decoder.exceptions import (
     FileFormatError,
     NoValidFilesFound,
@@ -151,7 +151,7 @@ def __get_likely_key(keys: Dict[str, int], count) -> str:
     return main_key
 
 
-def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
+def guess_at_key(src: Path, callbacks: Callback = Callback()) -> str:
     """`guess_at_key` Check the path for PNG images and return the decoding key
 
     Finds image files under the specified path and looks for a key to decode all the files.
@@ -159,9 +159,8 @@ def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
 
     Args:
     - `src` (`Path`): Path to search for .rpgmvp files
-    - `pb_cb` (`Callable[[click._termui_impl.Progressbar], bool]`, optional): Callback to\
-    display current progress. Call with `None` when bar is complete. Returns `True` if the\
-    user has canceled the operation. Defaults to `None`.
+    - `callbacks` (`Callback`, optional): Callbacks to use for the UI. Defaults to an empty\
+      set of callbacks
 
     Raises:
     - `NoValidFilesFound`: If no valid PNG images are found
@@ -174,9 +173,8 @@ def guess_at_key(src: Path, pb_cb: Callable[[Progressbar], bool] = None) -> str:
     keys: Dict[str, int] = {}
     count: int
     with click.progressbar(files, label="Finding key") as all_files:
-        count = _handle_files(pb_cb, keys, all_files)
-    if pb_cb is not None:
-        pb_cb(None)
+        count = _handle_files(callbacks.progressbar, keys, all_files)
+    callbacks.progressbar(None)
 
     if count == 0:
         raise NoValidFilesFound(f"No png files found under: '{Path}'")
@@ -290,14 +288,12 @@ def get_file_ext(data: bytes) -> str:
     return "." + filetype.split("/")[-1]
 
 
-# pylint: disable=too-many-arguments
 def decode_files(
     src: str,
     dst: str,
     key: str,
     detect_type: bool,
-    pb_cb: Callable[[Progressbar], bool] = None,
-    overwrite_callback: Callable[[str], bool] = None,
+    callbacks: Callback = Callback(),
 ) -> None:
     """`decode_files` Decodes the files
 
@@ -308,12 +304,8 @@ def decode_files(
     - `dst` (`str`): Destination directory for output
     - `key` (`str`): Key to use for decoding
     - `detect_type` (`bool`): If file extensions should be detected from the file contents
-    - `pb_cb` (`Callable[[click._termui_impl.Progressbar], bool]`, optional): Callback to\
-    display current progress. Call with `None` when bar is complete. Returns `True` if the\
-    user has canceled the operation. Defaults to `None`.
-    - `overwrite_callback` (`Callable[[str], bool`, optional): Callback to use if files are\
-    about to be overwritten. Call with the filename in question. `None` indicates user has\
-    canceled the operation. Returns if the file should be overwritten. Defaults to `None`.
+    - `callbacks` (`Callback`, optional): Callbacks to use for the UI. Defaults to an empty\
+      set of callbacks
     """
     # pylint: disable=too-many-locals
     source_dir = Path(src).resolve()
@@ -328,7 +320,7 @@ def decode_files(
     with click.progressbar(files, label="Decoding files") as all_files:
         filename: Path
         for filename in all_files:
-            if pb_cb and pb_cb(all_files):
+            if callbacks.progressbar(all_files):
                 break
             output_file: PurePath = destination.joinpath(PurePath(filename).relative_to(source))
             result: bytes
@@ -352,18 +344,16 @@ def decode_files(
                     continue
             else:
                 output_file = _get_std_ext(output_file)
-            if not _save_file(output_file, result, overwrite_callback):
+            if not _save_file(output_file, result, callbacks.overwrite):
                 break
-    if pb_cb:
-        pb_cb(None)
+    callbacks.progressbar(None)
 
 
 def encode_files(
     src: str,
     dst: str,
     key: str,
-    pb_cb: Callable[[Progressbar], bool] = None,
-    overwrite_callback: Callable[[str], bool] = None,
+    callbacks: Callback = Callback(),
 ) -> None:
     """`encode_files` Encodes the files
 
@@ -373,12 +363,8 @@ def encode_files(
     - `src` (`str`): Source directory to search
     - `dst` (`str`): Destination directory for output
     - `key` (`str`): Key to use for encoding
-    - `pb_cb` (`Callable[[click._termui_impl.Progressbar], bool]`, optional): Callback to\
-    display current progress. Call with `None` when bar is complete. Returns `True` if the\
-    user has canceled the operation. Defaults to `None`.
-    - `overwrite_callback` (`Callable[[str], bool`, optional): Callback to use if files are\
-    about to be overwritten. Call with the filename in question. `None` indicates user has\
-    canceled the operation. Returns if the file should be overwritten. Defaults to `None`.
+    - `callbacks` (`Callback`, optional): Callbacks to use for the UI. Defaults to an empty\
+      set of callbacks
     """
     # pylint: disable=too-many-locals
     source_dir = Path(src).resolve()
@@ -393,9 +379,8 @@ def encode_files(
     with click.progressbar(files, label="Encoding files") as all_files:
         filename: Path
         for filename in all_files:
-            if pb_cb is not None:
-                if pb_cb(all_files):
-                    break
+            if callbacks.progress(all_files):
+                break
             output_file: PurePath = destination.joinpath(PurePath(filename).relative_to(source))
             filetype: str
             with click.open_file(filename, "rb") as file:
@@ -408,10 +393,9 @@ def encode_files(
                 output_file = output_file.with_suffix(".rpgmvp")
             elif filetype.startswith("audio"):
                 output_file = output_file.with_suffix(".rpgmvp")
-            if not _save_file(output_file, data, overwrite_callback):
+            if not _save_file(output_file, data, callbacks.overwrite):
                 break
-    if pb_cb is not None:
-        pb_cb(None)
+    callbacks.progressbar(None)
 
 
 def _get_std_ext(output_file):

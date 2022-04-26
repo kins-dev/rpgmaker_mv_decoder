@@ -34,5 +34,6 @@
     "esbonio.sphinx.confDir": "${workspaceFolder}/docs",
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
-    "python.linting.flake8Enabled": false
+    "python.linting.flake8Enabled": false,
+    "pre-commit-helper.runOnSave": "fixes"
 }

@@ -13,6 +13,7 @@ from pygubu.widgets.pathchooserinput import PathChooserInput
 
 import rpgmaker_mv_decoder
 from icon_data import ABOUT_ICON, TITLE_BAR_ICON
+from rpgmaker_mv_decoder.callback import Callback
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
 from rpgmaker_mv_decoder.utils import decode_files, encode_files, guess_at_key
 
@@ -244,7 +245,7 @@ class _GuiApp:
         self.window.title(f"RPGMaker MV Decoder / Encoder v{rpgmaker_mv_decoder.__version__}")
         self.window.configure(height="200", padx="10", pady="5", width="500")
         self.window.resizable(0, 0)
-        self.dialog = _ProgressUI(self.window)
+        self.progress = _ProgressUI(self.window)
         self.about = _AboutUI(self.window)
 
         # Main widget
@@ -253,6 +254,7 @@ class _GuiApp:
         self.src_path = ""
         self.dst_path = ""
         self.gui_key = ""
+        self.callbacks = Callback(self.progress.set_progress, self._overwrite_cb)
 
     def _build_frame_act(self):
         self.frame_action = ttk.Frame(self.window)
@@ -369,20 +371,20 @@ class _GuiApp:
 
     def _show_dialog(self, title: str, text: str):
         self.dialog_shown = True
-        if self.dialog is None:
-            self.dialog = _ProgressUI(self.window)
-            self.dialog.set_title(title)
-            self.dialog.set_label(text)
-            self.dialog.run()
+        if self.progress is None:
+            self.progress = _ProgressUI(self.window)
+            self.progress.set_title(title)
+            self.progress.set_label(text)
+            self.progress.run()
         else:
-            self.dialog.set_title(title)
-            self.dialog.set_label(text)
-            self.dialog.show()
+            self.progress.set_title(title)
+            self.progress.set_label(text)
+            self.progress.show()
 
     def _hide_dialog(self):
-        if self.dialog is not None:
+        if self.progress is not None:
             if self.dialog_shown:
-                self.dialog.close()
+                self.progress.close()
         self.dialog_shown = False
 
     def _validate_text(self, new_text: str) -> bool:
@@ -410,7 +412,7 @@ class _GuiApp:
 
             threading.Thread(target=_show_dialog).start()
             try:
-                self.gui_key = guess_at_key(self.src_path, self.dialog.set_progress)
+                self.gui_key = guess_at_key(self.src_path, self.callbacks)
                 self.entry_key.delete(0, tk.END)
                 self.entry_key.insert(0, self.gui_key)
             except NoValidFilesFound:
@@ -439,8 +441,7 @@ class _GuiApp:
                 self.dst_path,
                 self.entry_key.get(),
                 self.detect_file_ext.get() == "1",
-                self.dialog.set_progress,
-                self._overwrite_cb,
+                self.callbacks,
             )
             self._hide_dialog()
             self._set_button_state()
@@ -459,8 +460,7 @@ class _GuiApp:
                 self.src_path,
                 self.dst_path,
                 self.entry_key.get(),
-                self.dialog.set_progress,
-                self._overwrite_cb,
+                self.callbacks,
             )
             self._hide_dialog()
             self._set_button_state()
