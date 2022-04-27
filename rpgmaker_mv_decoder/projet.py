@@ -97,15 +97,15 @@ class Project:
     def encoded_images(self: _T) -> List[Path]:
         """`encoded_images` list of encoded images under the source path
 
-        Creates a sorted list of `Path`s ending with ".rpgmvp" under the source path, or `None`
-        if the source path is unset"""
+        Creates a sorted list of `Path` objects ending with ".rpgmvp" under the source path, or
+        `None` if the source path is unset"""
         return sorted(Path(self.source).glob("**/*.rpgmvp")) if self.source else None
 
     @property
     def encoded_files(self: _T) -> List[Path]:
         """`encoded_files` list of encoded files under the source path
 
-        Creates a sorted list of `Path`s ending with ".rpgmvp" or ".rpgmvo under the
+        Creates a sorted list of `Path` objects ending with ".rpgmvp" or ".rpgmvo under the
         source path, or `None` if the source path is unset"""
         return sorted(Path(self.source).glob("**/*.rpgmv[op]")) if self.source else None
 
@@ -113,8 +113,8 @@ class Project:
     def all_files(self: _T) -> List[Path]:
         """`all_files` list of all files under the source path
 
-        Creates a sorted list of `Path`s that are files under the source path, or `None` if the
-        source path is unset
+        Creates a sorted list of `Path` objects that are files under the source path, or `None`
+        if the source path is unset
         """
         if self.source is None:
             return None
