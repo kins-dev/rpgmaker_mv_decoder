@@ -19,6 +19,10 @@ def _default_error_callback(_: str) -> bool:
     return False
 
 
+def _default_warning_callback(_: str) -> bool:
+    return False
+
+
 class Callback:
     """`Callback` encapsulates all the callbacks that might be used during execution"""
 
@@ -27,10 +31,12 @@ class Callback:
         progressbar_callback: Callable[[ProgressBar], bool] = _default_progressbar_callback,
         overwrite_callback: Callable[[str], bool] = _default_overwrite_callback,
         error_callback: Callable[[str], bool] = _default_error_callback,
+        warning_callback: Callable[[str], bool] = _default_error_callback,
     ):
         self._progressbar_callback = progressbar_callback
         self._overwrite_callback = overwrite_callback
         self._error_callback = error_callback
+        self._warning_callback = warning_callback
 
     @property
     def progressbar(self):
@@ -63,3 +69,13 @@ class Callback:
           the parameter. If the user cancels the operation, this should return `True`
         """
         return self._error_callback
+
+    @property
+    def warning(self):
+        """`warning` callback executed when an warning occurs
+
+        Returns:
+        - `Callable[[str], bool]`: Function to call. Warning message should be specified via \
+          the parameter. If the user cancels the operation, this should return `True`
+        """
+        return self._warning_callback

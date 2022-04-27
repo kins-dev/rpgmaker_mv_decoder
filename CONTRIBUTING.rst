@@ -113,7 +113,6 @@ Tips
 
 To run a subset of tests::
 
-
     $ python -m unittest tests.test_rpgmaker_mv_decoder
 
 Deploying
@@ -127,4 +126,9 @@ $ bump2version patch # possible: major / minor / patch
 $ git push
 $ git push --tags
 
-Travis will then deploy to PyPI if tests pass.
+Alternatively you can use something like::
+
+$ bump2version patch
+$ git push --atomic origin <branch> <tag>
+
+GitHub will then deploy to PyPI if tests pass.
