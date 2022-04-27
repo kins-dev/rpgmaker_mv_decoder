@@ -2,6 +2,14 @@
 History
 =======
 
+1.2.2 (2022-04-26)
+------------------
+
+* Added project class
+* Updated messages for skipped files
+* Fixed 5% calculation
+* Code cleanup
+
 1.2.1 (2022-04-26)
 ------------------
 
