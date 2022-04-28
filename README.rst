@@ -89,7 +89,7 @@ You can use the standard ``--help`` option for full documentation:
 Decoding
 ^^^^^^^^
 
-.. code-block:: plain
+.. code-block:: text
 
    Usage: decode.py [OPTIONS] <Source> <Destination> [<Key>]
 
@@ -114,7 +114,7 @@ Decoding
 Encoding
 ^^^^^^^^
 
-.. code-block:: plain
+.. code-block:: text
 
    Usage: encode.py [OPTIONS] <Source> <Destination> <Key>
 

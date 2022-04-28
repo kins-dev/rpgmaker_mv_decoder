@@ -50,7 +50,7 @@ You can use the standard `--help` option for full documentation:
 
 ### Decoding
 
-```plain
+```text
 Usage: decode.py [OPTIONS] <Source> <Destination> [<Key>]
 
   Decodes RPGMaker files under <Source> directory to <Destination> directory.
@@ -74,7 +74,7 @@ Options:
 
 ### Encoding
 
-```plain
+```text
 Usage: encode.py [OPTIONS] <Source> <Destination> <Key>
 
   Encodes image and audio files under <Source> directory.

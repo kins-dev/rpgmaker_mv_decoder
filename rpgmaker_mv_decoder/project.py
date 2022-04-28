@@ -42,10 +42,9 @@ class Project:
 
     @key.setter
     def key(self: _T, value: str):
-        """Sets the `key`. Must be a 32 charcater hex string or the key will be set to None"""
+        """Sets the `key`. Must be a 32 charcater hex string or the key will be set to `None`"""
         if value:
-            pattern: re.Pattern = re.compile(r"^[0-9a-fA-F]{32}$")
-            if pattern.match(value):
+            if re.compile(r"^[0-9a-fA-F]{32}$").match(value):
                 self._key = value
                 return
         self._key = None

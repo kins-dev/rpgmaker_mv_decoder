@@ -20,10 +20,10 @@ rpgmaker\_mv\_decoder.exceptions module
    :undoc-members:
    :show-inheritance:
 
-rpgmaker\_mv\_decoder.projet module
------------------------------------
+rpgmaker\_mv\_decoder.project module
+------------------------------------
 
-.. automodule:: rpgmaker_mv_decoder.projet
+.. automodule:: rpgmaker_mv_decoder.project
    :members:
    :undoc-members:
    :show-inheritance:
