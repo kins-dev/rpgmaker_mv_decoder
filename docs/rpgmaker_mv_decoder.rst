@@ -12,6 +12,14 @@ rpgmaker\_mv\_decoder.callback module
    :undoc-members:
    :show-inheritance:
 
+rpgmaker\_mv\_decoder.constants module
+--------------------------------------
+
+.. automodule:: rpgmaker_mv_decoder.constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 rpgmaker\_mv\_decoder.exceptions module
 ---------------------------------------
 
@@ -24,6 +32,14 @@ rpgmaker\_mv\_decoder.project module
 ------------------------------------
 
 .. automodule:: rpgmaker_mv_decoder.project
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rpgmaker\_mv\_decoder.projectpaths module
+-----------------------------------------
+
+.. automodule:: rpgmaker_mv_decoder.projectpaths
    :members:
    :undoc-members:
    :show-inheritance:

@@ -14,18 +14,13 @@ import magic
 from click._termui_impl import ProgressBar
 
 from rpgmaker_mv_decoder.callback import Callback
+from rpgmaker_mv_decoder.constants import IHDR_SECTION, OCT_STREAM, PNG_HEADER, RPG_MAKER_MV_MAGIC
 from rpgmaker_mv_decoder.exceptions import (
     FileFormatError,
     NoValidFilesFound,
     PNGHeaderError,
     RPGMakerHeaderError,
 )
-
-RPG_MAKER_MV_MAGIC = bytes.fromhex("5250474d560000000003010000000000")
-PNG_HEADER = "89504e470d0a1a0a0000000d49484452"
-OCT_STREAM = "application/octet-stream"
-IHDR_SECTION = b"IHDR"
-NOT_A_PNG = "Invalid checksum"
 
 
 def __int_xor(var: bytes, key: bytes) -> bytes:
@@ -381,7 +376,7 @@ def encode_files(
     with click.progressbar(files, label="Encoding files") as all_files:
         filename: Path
         for filename in all_files:
-            if callbacks.progress(all_files):
+            if callbacks.progressbar(all_files):
                 break
             output_file: PurePath = destination.joinpath(PurePath(filename).relative_to(source))
             filetype: str
