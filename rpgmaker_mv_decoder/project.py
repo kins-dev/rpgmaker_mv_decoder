@@ -74,7 +74,7 @@ def _is_png_image(png_ihdr_data: bytes) -> bool:
 
 
 class Project:
-    """Not in use yet"""
+    """Handles a project and runs operations"""
 
     def __init__(
         self: _T,

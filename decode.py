@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """decode.py is the entry script for CLI decoding"""
+# pylint: disable=duplicate-code
+
 import sys
 from argparse import HelpFormatter
 from gettext import gettext as _
 
 import click
 
-from rpgmaker_mv_decoder.utils import decode_files, guess_at_key
-
-# pylint: disable=duplicate-code
+from rpgmaker_mv_decoder.project import Project
+from rpgmaker_mv_decoder.utils import guess_at_key
 
 SOURCE_STR = (
     "The source directory. For best results this should be the parent "
@@ -93,7 +94,7 @@ def main(
     """
     if key is None:
         key = guess_at_key(source)
-    decode_files(source, destination, key, detect_type)
+    Project(source, destination, key).decode(detect_type)
     return 0
 
 
