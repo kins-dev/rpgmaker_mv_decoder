@@ -23,7 +23,7 @@ from rpgmaker_mv_decoder.exceptions import (
 )
 
 
-def __int_xor(var: bytes, key: bytes) -> bytes:
+def int_xor(var: bytes, key: bytes) -> bytes:
     """`int_xor` integer xor
 
     Runs XOR on 2 bytes streams (must be less than 64 bytes)
@@ -55,7 +55,7 @@ def encode_header(file_header: bytes, key: str) -> bytes:
     Returns:
     - `bytes`: First 32 bytes of the encoded file
     """
-    return RPG_MAKER_MV_MAGIC + __int_xor(bytes.fromhex(key), file_header)
+    return RPG_MAKER_MV_MAGIC + int_xor(bytes.fromhex(key), file_header)
 
 
 def read_header_and_decode(
@@ -101,7 +101,7 @@ def read_header_and_decode(
                 f"'{checksum.hex()}' != '{crc.hex()}'",
                 "This PNG's IHDR section doesn't checksum correctly, " "is this a PNG image?",
             )
-    return __int_xor(bytes.fromhex(key), header)
+    return int_xor(bytes.fromhex(key), header)
 
 
 def __print_possible_keys(sorted_keys: Dict[str, int], count: int) -> None:
@@ -260,8 +260,8 @@ def __update_src_dest(source: Path, destination: PurePath) -> Tuple[PurePath, Pu
     return (PurePath(source), PurePath(destination))
 
 
-def get_file_ext(data: bytes) -> str:
-    """`get_file_ext` Returns a file extension based on the file contents
+def _get_file_ext(data: bytes) -> str:
+    """`_get_file_ext` Returns a file extension based on the file contents
 
     Uses libmagic to figure out the actual file type and place a proper
     extension on the file
@@ -331,7 +331,7 @@ def decode_files(
                     continue
             if detect_type:
                 try:
-                    output_file = output_file.with_suffix(get_file_ext(result))
+                    output_file = output_file.with_suffix(_get_file_ext(result))
                 except FileFormatError:
                     click.echo()
                     click.echo(

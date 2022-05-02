@@ -36,6 +36,30 @@ rpgmaker\_mv\_decoder.project module
    :undoc-members:
    :show-inheritance:
 
+rpgmaker\_mv\_decoder.projectdecoder module
+-------------------------------------------
+
+.. automodule:: rpgmaker_mv_decoder.projectdecoder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rpgmaker\_mv\_decoder.projectencoder module
+-------------------------------------------
+
+.. automodule:: rpgmaker_mv_decoder.projectencoder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rpgmaker\_mv\_decoder.projectkeyfinder module
+---------------------------------------------
+
+.. automodule:: rpgmaker_mv_decoder.projectkeyfinder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 rpgmaker\_mv\_decoder.projectpaths module
 -----------------------------------------
 
