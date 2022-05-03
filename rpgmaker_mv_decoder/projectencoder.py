@@ -20,12 +20,12 @@ class ProjectEncoder(Project):
 
     def __init__(
         self: _T,
-        source: PurePath,
+        encoding_source: PurePath,
         destination: PurePath,
         key: str,
         encoding_callbacks: Callback = Callback(),
     ) -> _T:
-        Project.__init__(self, source, destination, key, encoding_callbacks)
+        Project.__init__(self, encoding_source, destination, key, encoding_callbacks)
 
     def encode_header(self: _T, file_header: bytes) -> bytes:
         """`encode_header` Encode a file with a key
