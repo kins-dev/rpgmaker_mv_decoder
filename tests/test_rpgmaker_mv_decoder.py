@@ -12,7 +12,8 @@ from click.testing import CliRunner
 
 from decode import main
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
-from rpgmaker_mv_decoder.utils import decode_files, guess_at_key
+from rpgmaker_mv_decoder.projectdecoder import ProjectDecoder
+from rpgmaker_mv_decoder.projectkeyfinder import ProjectKeyFinder
 
 
 class TestDecode(unittest.TestCase):
@@ -48,21 +49,25 @@ class TestDecode(unittest.TestCase):
             msg=f"Invalid directory '{self.invalid_src_dir}' should "
             "raise 'NoValidFilesFound' exception",
         ):
-            guess_at_key(self.invalid_src_dir)
+            ProjectKeyFinder(self.invalid_src_dir).find_key()
 
     def test_decode_files_no_filetype_detection(self):
-        """Test finding a key."""
+        """Test decoding a project."""
         cnt: int = 0
         for path in self.valid_src_dir:
             output_dir = self.dst_dir.joinpath(str(cnt))
-            decode_files(path, output_dir, self.key, False)
+            ProjectDecoder(path, output_dir, self.key).decode(False)
             cnt += 1
         shutil.rmtree(Path(self.dst_dir).resolve())
 
     def test_key_finding_valid(self):
         """Test finding a key."""
         for path in self.valid_src_dir:
-            self.assertEqual(self.key, guess_at_key(path), f"Decoded key doesn't match for '{path}")
+            self.assertEqual(
+                self.key,
+                ProjectKeyFinder(path).find_key(),
+                f"Decoded key doesn't match for '{path}",
+            )
 
 
 class TestCLI(unittest.TestCase):

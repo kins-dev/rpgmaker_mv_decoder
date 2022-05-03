@@ -8,8 +8,8 @@ from gettext import gettext as _
 
 import click
 
-from rpgmaker_mv_decoder.project import Project
-from rpgmaker_mv_decoder.utils import guess_at_key
+from rpgmaker_mv_decoder.projectdecoder import ProjectDecoder
+from rpgmaker_mv_decoder.projectkeyfinder import ProjectKeyFinder
 
 SOURCE_STR = (
     "The source directory. For best results this should be the parent "
@@ -93,8 +93,8 @@ def main(
     - `detect_type` (`bool`): If file should have extensions based on file contents
     """
     if key is None:
-        key = guess_at_key(source)
-    Project(source, destination, key).decode(detect_type)
+        key = ProjectKeyFinder(source).find_key()
+    ProjectDecoder(source, destination, key).decode(detect_type)
     return 0
 
 

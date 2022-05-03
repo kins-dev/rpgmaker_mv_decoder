@@ -12,7 +12,6 @@ from rpgmaker_mv_decoder.callback import Callback
 from rpgmaker_mv_decoder.constants import OCT_STREAM, RPG_MAKER_MV_MAGIC
 from rpgmaker_mv_decoder.exceptions import FileFormatError, RPGMakerHeaderError
 from rpgmaker_mv_decoder.project import Project
-from rpgmaker_mv_decoder.projectpaths import ProjectPaths
 from rpgmaker_mv_decoder.utils import int_xor
 
 _T = TypeVar("_T", bound="ProjectDecoder")
@@ -28,7 +27,7 @@ class ProjectDecoder(Project):
         key: str,
         callbacks: Callback = Callback(),
     ) -> _T:
-        Project.__init__(self, ProjectPaths(source, destination), key, callbacks)
+        Project.__init__(self, source, destination, key, callbacks)
 
     def _get_output_filename(self: _T, filename: Path, data: bytes = None) -> str:
         """`_get_output_filename` Returns a file name for the specified file
@@ -50,8 +49,8 @@ class ProjectDecoder(Project):
         Returns:
         - `str`: The decoded file extension
         """
-        output_file: PurePath = self._project_paths.output_directory.joinpath(
-            PurePath(filename).relative_to(self._project_paths.source)
+        output_file: PurePath = self.project_paths.output_directory.joinpath(
+            PurePath(filename).relative_to(self.project_paths.source)
         )
         if data:
             filetype: str = magic.from_buffer(data, mime=True)
@@ -127,9 +126,9 @@ class ProjectDecoder(Project):
         detect_type: bool,
     ):
         """Not ready yet"""
-        click.echo(f"Reading from: '{self._project_paths.source}'")
-        click.echo(f"Writing to:   '{self._project_paths.output_directory}'")
-        files: List[Path] = self._project_paths.encoded_files
+        click.echo(f"Reading from: '{self.project_paths.source}'")
+        click.echo(f"Writing to:   '{self.project_paths.output_directory}'")
+        files: List[Path] = self.project_paths.encoded_files
         with click.progressbar(files, label="Decoding files") as all_files:
             filename: Path
             for filename in all_files:

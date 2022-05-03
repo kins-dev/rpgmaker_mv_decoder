@@ -12,7 +12,7 @@ _T = TypeVar("_T", bound="ProjectPaths")
 
 
 class ProjectPaths:
-    """Not in use yet"""
+    """Object that holds/validates project paths"""
 
     def __init__(
         self: _T,
@@ -34,13 +34,10 @@ class ProjectPaths:
         """Sets the `destination` path. Value must exist on disk and be a directory. Passing an
         invalid path sets `destination` to `None`"""
         if value:
-            try:
-                destination_directory: Path = Path(value).resolve(strict=True)
-                if destination_directory.is_dir():
-                    self._destination = PurePath(destination_directory)
-                    return
-            except FileNotFoundError:
-                pass
+            destination_directory: Path = Path(value).resolve(strict=False)
+            if not destination_directory.exists() or destination_directory.is_dir():
+                self._destination = PurePath(destination_directory)
+                return
         self._destination = None
         return
 

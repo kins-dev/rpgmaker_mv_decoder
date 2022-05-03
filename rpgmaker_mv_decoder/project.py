@@ -23,12 +23,12 @@ class Project:
 
     def __init__(
         self: _T,
-        source: PurePath = None,
-        destination: PurePath = None,
+        source_path: PurePath = None,
+        destination_path: PurePath = None,
         key: str = None,
         callbacks: Callback = Callback(),
     ) -> _T:
-        self._project_paths: ProjectPaths = ProjectPaths(source, destination)
+        self.project_paths: ProjectPaths = ProjectPaths(source_path, destination_path)
         self.key = key
         self._callbacks = callbacks
 
@@ -60,6 +60,18 @@ class Project:
                 file.write(data)
         return True
 
+    def warning(self: _T, text: str) -> bool:
+        """`Warning` Runs the warning callback
+
+        Args:
+        - `self` (`_T`): Project object
+        - `text` (`str`): Text for warning
+
+        Returns:
+        - `bool`: `True` if the operation should continue
+        """
+        return self._callbacks.warning(text)
+
     @property
     def key(self: _T) -> str:
         """Gets the `key` or returns `None` if the key is not valid"""
@@ -73,6 +85,3 @@ class Project:
                 self._key = value
                 return
         self._key = None
-
-    def find_key(self: _T):
-        """Not ready yet"""

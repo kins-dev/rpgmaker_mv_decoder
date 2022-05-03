@@ -6,7 +6,7 @@ from gettext import gettext as _
 
 import click
 
-from rpgmaker_mv_decoder.project import Project
+from rpgmaker_mv_decoder.projectencoder import ProjectEncoder
 
 # pylint: disable=duplicate-code
 
@@ -76,7 +76,7 @@ def main(source: click.Path = None, destination: click.Path = None, key: str = N
     """
     if key is None:
         return 1
-    Project(source, destination, key).encode()
+    ProjectEncoder(source, destination, key).encode()
     return 0
 
 

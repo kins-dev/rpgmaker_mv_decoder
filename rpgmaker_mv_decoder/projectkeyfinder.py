@@ -13,7 +13,6 @@ from rpgmaker_mv_decoder.callback import Callback
 from rpgmaker_mv_decoder.constants import IHDR_SECTION, PNG_HEADER, RPG_MAKER_MV_MAGIC
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
 from rpgmaker_mv_decoder.project import Project
-from rpgmaker_mv_decoder.projectpaths import ProjectPaths
 from rpgmaker_mv_decoder.utils import int_xor
 
 _T = TypeVar("_T", bound="ProjectKeyFinder")
@@ -37,7 +36,7 @@ class ProjectKeyFinder(Project):
         source: PurePath,
         callbacks: Callback = Callback(),
     ) -> _T:
-        Project.__init__(self, ProjectPaths(source, None), None, callbacks)
+        Project.__init__(self, source, None, None, callbacks)
         self._keys: Dict[str, int] = {}
         self._main_key: bytes = None
         self._count: int = 0
@@ -90,7 +89,7 @@ class ProjectKeyFinder(Project):
         - `str`: Key to use for decoding
 
         """
-        self.key = list(self.keys.keys)[0]
+        self.key = list(self.keys.keys())[0]
         if len(self.keys) != 1:
             self.__print_possible_keys()
 
@@ -116,9 +115,9 @@ class ProjectKeyFinder(Project):
 
             with click.open_file(filename, "rb") as file:
                 checked += 1
-                rpgmaker_header = file.read(16)
-                file_header = file.read(16)
-                png_ihdr = file.read(17)
+                rpgmaker_header: bytes = file.read(16)
+                file_header: bytes = file.read(16)
+                png_ihdr: bytes = file.read(17)
                 if rpgmaker_header != RPG_MAKER_MV_MAGIC:
                     continue
                 if not _is_png_image(png_ihdr):
@@ -134,16 +133,11 @@ class ProjectKeyFinder(Project):
         self._callbacks.progressbar(None)
         return count
 
-    def guess_at_key(self: _T) -> str:
-        """`guess_at_key` Check the path for PNG images and return the decoding key
+    def find_key(self: _T) -> str:
+        """`find_key` Check the path for PNG images and return the decoding key
 
         Finds image files under the specified path and looks for a key to decode all the files.
         This can fail if only a small number (less than 3) of the .rpgmvp files are .png images.
-
-        Args:
-        - `src` (`Path`): Path to search for .rpgmvp files
-        - `callbacks` (`Callback`, optional): Callbacks to use for the UI. Defaults to an empty\
-        set of callbacks
 
         Raises:
         - `NoValidFilesFound`: If no valid PNG images are found
@@ -152,7 +146,9 @@ class ProjectKeyFinder(Project):
         - `str`: Decoding key
 
         """
-        files: List[Path] = sorted(Path(self._project_paths.source).glob("**/*.rpgmvp"))
+        if not self.project_paths.source:
+            raise NoValidFilesFound("Invalid source path")
+        files: List[Path] = sorted(Path(self.project_paths.source).glob("**/*.rpgmvp"))
         with click.progressbar(files, label="Finding key") as all_files:
             self._count = self._handle_files(all_files)
 

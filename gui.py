@@ -15,8 +15,9 @@ import rpgmaker_mv_decoder
 from icon_data import ABOUT_ICON, TITLE_BAR_ICON
 from rpgmaker_mv_decoder.callback import Callback
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
-from rpgmaker_mv_decoder.project import Project
-from rpgmaker_mv_decoder.utils import guess_at_key
+from rpgmaker_mv_decoder.projectdecoder import ProjectDecoder
+from rpgmaker_mv_decoder.projectencoder import ProjectEncoder
+from rpgmaker_mv_decoder.projectkeyfinder import ProjectKeyFinder
 
 PROJECT_PATH = pathlib.Path(__file__).parent
 PROJECT_UI = PROJECT_PATH / "gui.ui"
@@ -413,7 +414,7 @@ class _GuiApp:
 
             threading.Thread(target=_show_dialog).start()
             try:
-                self.gui_key = guess_at_key(self.src_path, self.callbacks)
+                self.gui_key = ProjectKeyFinder(self.src_path, self.callbacks).find_key()
                 self.entry_key.delete(0, tk.END)
                 self.entry_key.insert(0, self.gui_key)
             except NoValidFilesFound:
@@ -437,9 +438,9 @@ class _GuiApp:
         threading.Thread(target=_show_dialog_decode).start()
 
         def _decode_files():
-            Project(self.src_path, self.dst_path, self.entry_key.get(), self.callbacks).decode(
-                self.detect_file_ext.get() == "1"
-            )
+            ProjectDecoder(
+                self.src_path, self.dst_path, self.entry_key.get(), self.callbacks
+            ).decode(self.detect_file_ext.get() == "1")
             self._hide_dialog()
             self._set_button_state()
 
@@ -453,7 +454,9 @@ class _GuiApp:
         threading.Thread(target=_show_dialog_encode).start()
 
         def _encode_files():
-            Project(self.src_path, self.dst_path, self.entry_key.get(), self.callbacks).encode()
+            ProjectEncoder(
+                self.src_path, self.dst_path, self.entry_key.get(), self.callbacks
+            ).encode()
             self._hide_dialog()
             self._set_button_state()
 
