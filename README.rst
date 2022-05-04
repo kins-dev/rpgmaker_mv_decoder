@@ -1,22 +1,22 @@
 
-RPGMaker MV Decoder v1.2.1
+RPGMaker MV Decoder v1.3.0
 ==========================
 
 
-.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/CodeQL/v1.2.1?label=v1.2.1%20CodeQL&logo=GitHub
+.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/CodeQL/v1.3.0?label=v1.3.0%20CodeQL&logo=GitHub
    :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/codeql-analysis.yml
-   :alt: v1.2.1 CodeQL Status
+   :alt: v1.3.0 CodeQL Status
  
-.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Python%20application/v1.2.1?label=v1.2.1%20Python%20application&logo=GitHub
+.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Python%20application/v1.3.0?label=v1.3.0%20Python%20application&logo=GitHub
    :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-app.yml
-   :alt: v1.2.1 Python Application Status
+   :alt: v1.3.0 Python Application Status
  
-.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Upload%20Python%20Package/v1.2.1?label=v1.2.1%20Upload%20Python%20Package&logo=GitHub
+.. image:: https://img.shields.io/github/workflow/status/kins-dev/rpgmaker_mv_decoder/Upload%20Python%20Package/v1.3.0?label=v1.3.0%20Upload%20Python%20Package&logo=GitHub
    :target: https://github.com/kins-dev/rpgmaker_mv_decoder/actions/workflows/python-publish.yml
-   :alt: v1.2.1 Pylint Status
+   :alt: v1.3.0 Pylint Status
  
-.. image:: https://img.shields.io/readthedocs/rpgmaker_mv_decoder/v1.2.1?label=v1.2.1%20Documentation&logo=readthedocs
-   :target: https://rpgmaker-mv-decoder.readthedocs.io/en/v1.2.1/
+.. image:: https://img.shields.io/readthedocs/rpgmaker_mv_decoder/v1.3.0?label=v1.3.0%20Documentation&logo=readthedocs
+   :target: https://rpgmaker-mv-decoder.readthedocs.io/en/v1.3.0/
    :alt: Documentation status
 
 
