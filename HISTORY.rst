@@ -2,13 +2,14 @@
 History
 =======
 
-1.2.2 (2022-04-26)
+1.3.0 (2022-05-04)
 ------------------
 
 * Added project class
 * Updated messages for skipped files
-* Fixed 5% calculation
+* Fixed same key calculation
 * Code cleanup
+* Refactored CLI - Removed duplicated code
 
 1.2.1 (2022-04-26)
 ------------------

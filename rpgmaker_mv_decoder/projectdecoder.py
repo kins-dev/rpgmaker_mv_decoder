@@ -27,6 +27,19 @@ class ProjectDecoder(Project):
         key: str,
         callbacks: Callback = Callback(),
     ) -> _T:
+        """`__init__` ProjectDecoder constructor
+
+        Args:
+        - `self` (`_T`): ProjectDecoder object
+        - `source` (`PurePath`): Where to find the files to decode
+        - `destination` (`PurePath`): Where to save the files to decode
+        - `key` (`str`): Key to use when decoding
+        - `callbacks` (`Callback`, optional): Callbacks to run on events.\
+          Defaults to `Callback()`.
+
+        Returns:
+        - `_T`: _description_
+        """
         Project.__init__(self, source, destination, key, callbacks)
 
     def _get_output_filename(self: _T, filename: Path, data: bytes = None) -> str:

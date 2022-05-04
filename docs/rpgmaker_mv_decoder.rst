@@ -12,6 +12,14 @@ rpgmaker\_mv\_decoder.callback module
    :undoc-members:
    :show-inheritance:
 
+rpgmaker\_mv\_decoder.cli\_help module
+--------------------------------------
+
+.. automodule:: rpgmaker_mv_decoder.cli_help
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 rpgmaker\_mv\_decoder.constants module
 --------------------------------------
 

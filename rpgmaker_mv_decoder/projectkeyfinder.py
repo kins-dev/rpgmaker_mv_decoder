@@ -38,9 +38,10 @@ class ProjectKeyFinder(Project):
     ) -> _T:
         Project.__init__(self, source, None, None, callbacks)
         self._keys: Dict[str, int] = {}
-        self._main_key: bytes = None
         self._count: int = 0
-        self._keys_modified = False
+        self._keys_modified: bool = False
+        self._skipped: int = 0
+        self._total: int = 0
 
     @property
     def keys(self: _T) -> Dict[str, int]:
@@ -93,45 +94,48 @@ class ProjectKeyFinder(Project):
         if len(self.keys) != 1:
             self.__print_possible_keys()
 
-    def _report_results(self: _T, all_files: ProgressBar, checked: int, item):
-        files_skipped: int = checked - self._count
-        percentage: float = (self._count * 100.0) / all_files.length
+    def _report_results(self: _T, item: str):
+        percentage: float = (self._count * 100.0) / self._total
         click.echo(None)
-        click.echo(f"Found {files_skipped} files ending with .rpgmvp that were not PNG images")
+        if self._skipped > 0:
+            click.echo(f"Found {self._skipped} files ending with .rpgmvp that were not PNG images")
         click.echo(
-            f"Found the same key for {self._count}/{all_files.length} ({percentage:0.02f}%) files"
+            f"""Found the same key for {self._count}/{self._total} ({percentage:0.02f}%) files
+Using '{item}' as the key"""
         )
-        click.echo(f"Using '{item}' as the key")
 
     def _handle_files(self: _T, all_files: ProgressBar) -> int:
+        self._total = all_files.length
         min_found: int = max(9, all_files.length // 20) + 1
         filename: Path
-        count: int = 0
-        checked: int = 0
+        self._count = 0
+        self._skipped = 0
         for filename in all_files:
             item: str = None
             if self._callbacks.progressbar(all_files):
                 break
 
+            rpgmaker_header: bytes
+            file_header: bytes
+            png_ihdr: bytes
             with click.open_file(filename, "rb") as file:
-                checked += 1
-                rpgmaker_header: bytes = file.read(16)
-                file_header: bytes = file.read(16)
-                png_ihdr: bytes = file.read(17)
-                if rpgmaker_header != RPG_MAKER_MV_MAGIC:
-                    continue
-                if not _is_png_image(png_ihdr):
-                    continue
+                rpgmaker_header = file.read(16)
+                file_header = file.read(16)
+                png_ihdr = file.read(17)
+            if rpgmaker_header == RPG_MAKER_MV_MAGIC and _is_png_image(png_ihdr):
                 item = int_xor(file_header, PNG_HEADER).hex()
-                count += 1
+                self._count += 1
                 self.keys = item
-                if len(self.keys) == 1 and count >= min_found:
-                    all_files.update(all_files.length - count)
-                    self._report_results(all_files, checked, item)
+                if len(self.keys) == 1 and self._count >= min_found:
+                    all_files.update(self._total - self._count)
+                    self._report_results(item)
                     break
+            else:
+                self._skipped += 1
+                self._total -= 1
+                min_found = max(10, ((self._total // 20) + 1))
 
         self._callbacks.progressbar(None)
-        return count
 
     def find_key(self: _T) -> str:
         """`find_key` Check the path for PNG images and return the decoding key
@@ -150,7 +154,7 @@ class ProjectKeyFinder(Project):
             raise NoValidFilesFound("Invalid source path")
         files: List[Path] = sorted(Path(self.project_paths.source).glob("**/*.rpgmvp"))
         with click.progressbar(files, label="Finding key") as all_files:
-            self._count = self._handle_files(all_files)
+            self._handle_files(all_files)
 
         if self._count == 0:
             raise NoValidFilesFound(f"No png files found under: '{Path}'")

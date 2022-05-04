@@ -10,7 +10,8 @@ from typing import List
 
 from click.testing import CliRunner
 
-from decode import main
+from decode import decode
+from encode import encode
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
 from rpgmaker_mv_decoder.projectdecoder import ProjectDecoder
 from rpgmaker_mv_decoder.projectkeyfinder import ProjectKeyFinder
@@ -40,7 +41,7 @@ class TestDecode(unittest.TestCase):
         """Tear down test fixtures, if any."""
 
     def check_source_files(self):
-        """Check md5sums"""
+        """TODO: Check md5sums"""
 
     def test_key_finding_invalid(self):
         """Test invalid source directory."""
@@ -70,20 +71,59 @@ class TestDecode(unittest.TestCase):
             )
 
 
+class TestEncode(unittest.TestCase):
+    """TODO: Tests for `rpgmaker_mv_decoder` package."""
+
+    def __init__(self, methodName: str = ...) -> None:
+        super().__init__(methodName)
+        self.key = "acbd18db4cc2f85cedef654fccc4a4d8"
+        base_path: PurePath = PurePath("tests/assets/decode_project/www/")
+        self.valid_src_dir: List[PurePath] = [
+            base_path,
+            base_path.parent,
+            base_path.parent.parent,
+        ]
+        self.dst_dir: PurePath = PurePath("tests/output")
+        self.invalid_src_dir: PurePath = PurePath("tests/assets/invalid_project/")
+        self.dst_checksums = {}
+        self.src_checksums = {}
+
+    def setUp(self):
+        """Set up test fixtures, if any."""
+
+    def tearDown(self):
+        """Tear down test fixtures, if any."""
+
+    def check_source_files(self):
+        """TODO: Check md5sums"""
+
+
 class TestCLI(unittest.TestCase):
     """Tests for `rpgmaker_mv_decoder` package."""
 
     def __init__(self, methodName: str = ...) -> None:
         super().__init__(methodName)
 
-    def test_command_line_interface(self):
+    def test_decoder_command_line_interface(self):
         """Test the CLI."""
         if self is None:
             return
         runner = CliRunner()
-        result = runner.invoke(main)
+        result = runner.invoke(decode)
         assert result.exit_code == 2
-        assert "Usage: main" in result.output
-        help_result = runner.invoke(main, ["--help"])
+        assert "Usage: decode" in result.output
+        help_result = runner.invoke(decode, ["--help"])
+        assert help_result.exit_code == 0
+        assert "--help         Show this message and exit." in help_result.output
+
+    def test_encoder_command_line_interface(self):
+        """Test the CLI."""
+        if self is None:
+            return
+        runner = CliRunner()
+        result = runner.invoke(encode)
+        assert result.exit_code == 2
+        assert "Usage: encode" in result.output
+        help_result = runner.invoke(decode, ["--help"])
         assert help_result.exit_code == 0
         assert "--help         Show this message and exit." in help_result.output
