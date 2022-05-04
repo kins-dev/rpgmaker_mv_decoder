@@ -25,6 +25,18 @@ class ProjectEncoder(Project):
         key: str,
         encoding_callbacks: Callback = Callback(),
     ) -> _T:
+        """`ProjectEncoder` constructor
+
+        Args:
+        - `source` (`PurePath`): Where to find the files to encode
+        - `destination` (`PurePath`): Where to save the files to encode
+        - `key` (`str`): Key to use when encoding
+        - `callbacks` (`Callback`, optional): Callbacks to run on events.\
+          Defaults to `Callback()`.
+
+        Returns:
+        - `ProjectEncoder`: Object to run actions on
+        """
         Project.__init__(self, encoding_source, destination, key, encoding_callbacks)
 
     def encode_header(self: _T, file_header: bytes) -> bytes:
@@ -45,7 +57,6 @@ class ProjectEncoder(Project):
         """`encode_file` Takes a path and encodes a file
 
         Args:
-        - `self` (`Project`): Project object
         - `input_file` (`PurePath`): File to read and modify
 
         Returns:
@@ -67,7 +78,7 @@ class ProjectEncoder(Project):
         return self._save_file(output_file, data)
 
     def encode(self: _T):
-        """Not ready yet"""
+        """`encode` Encodes the project"""
         files: List[Path] = self.project_paths.all_files
         click.echo(f"Reading from: '{self.project_paths.source}'")
         click.echo(f"Writing to:   '{self.project_paths.output_directory}'")

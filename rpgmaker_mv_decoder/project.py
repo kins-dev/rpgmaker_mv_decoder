@@ -6,6 +6,7 @@ Module for dealing with RPGMaker projects
 
 import os
 import re
+from abc import ABC
 from pathlib import Path, PurePath
 from time import sleep
 from typing import TypeVar
@@ -18,7 +19,7 @@ from rpgmaker_mv_decoder.projectpaths import ProjectPaths
 _T = TypeVar("_T", bound="Project")
 
 
-class Project:
+class Project(ABC):
     """Handles a project and runs operations"""
 
     def __init__(
@@ -28,6 +29,18 @@ class Project:
         key: str = None,
         callbacks: Callback = Callback(),
     ) -> _T:
+        """`Project` constructor
+
+        Args:
+        - `source` (`PurePath`): Where to find the files
+        - `destination` (`PurePath`): Where to save the files
+        - `key` (`str`): Key to use
+        - `callbacks` (`Callback`, optional): Callbacks to run on events.\
+          Defaults to `Callback()`.
+
+        Returns:
+        - `Project`: Object
+        """
         self.project_paths: ProjectPaths = ProjectPaths(source_path, destination_path)
         self.key = key
         self._callbacks = callbacks
@@ -37,7 +50,6 @@ class Project:
         if the file exists already.
 
         Args:
-        - `self` (`Project`): Project object
         - `filename` (`PurePath`): File to save
         - `data` (`bytes`): What to write into the file
 
@@ -64,7 +76,6 @@ class Project:
         """`Warning` Runs the warning callback
 
         Args:
-        - `self` (`_T`): Project object
         - `text` (`str`): Text for warning
 
         Returns:

@@ -27,10 +27,9 @@ class ProjectDecoder(Project):
         key: str,
         callbacks: Callback = Callback(),
     ) -> _T:
-        """`__init__` ProjectDecoder constructor
+        """`ProjectDecoder` constructor
 
         Args:
-        - `self` (`_T`): ProjectDecoder object
         - `source` (`PurePath`): Where to find the files to decode
         - `destination` (`PurePath`): Where to save the files to decode
         - `key` (`str`): Key to use when decoding
@@ -38,7 +37,7 @@ class ProjectDecoder(Project):
           Defaults to `Callback()`.
 
         Returns:
-        - `_T`: _description_
+        - `ProjectDecoder`: object to run actions on
         """
         Project.__init__(self, source, destination, key, callbacks)
 
@@ -50,7 +49,6 @@ class ProjectDecoder(Project):
         original name to generate the extension.
 
         Args:
-        - `self` (`_T`): Project object
         - `filename` (`Path`): Original file path.
         - `data` (`bytes`, optional): File data (decoded) for libmagic. \
         Defaults to `None`.
@@ -115,11 +113,12 @@ class ProjectDecoder(Project):
         return int_xor(bytes.fromhex(self.key), header)
 
     def decode_file(self: _T, input_file: PurePath, detect_type: bool) -> bool:
-        """`encode_file` Takes a path and decodes a file
+        """`decode_file` Takes a path and decodes a file
 
         Args:
-        - `self` (`Project`): Project object
         - `input_file` (`PurePath`): File to read and modify
+        - `detect_type` (`bool`): True means generate file extensions based on\
+          file contents
 
         Returns:
         - `bool`: True if the operation should continue
@@ -137,8 +136,13 @@ class ProjectDecoder(Project):
     def decode(
         self: _T,
         detect_type: bool,
-    ):
-        """Not ready yet"""
+    ) -> None:
+        """`decode` Decodes a project
+
+        Args:_
+        - `detect_type` (`bool`): True means generate file extensions based on\
+          file contents
+        """
         click.echo(f"Reading from: '{self.project_paths.source}'")
         click.echo(f"Writing to:   '{self.project_paths.output_directory}'")
         files: List[Path] = self.project_paths.encoded_files
