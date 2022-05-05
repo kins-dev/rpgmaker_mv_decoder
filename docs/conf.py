@@ -29,10 +29,14 @@ sys.path.insert(0, os.path.abspath(".."))
 
 # pylint: disable=wrong-import-position
 # pylint: disable=using-constant-test
+# pylint: disable=import-error
 if True:
     import rpgmaker_mv_decoder
 
-# pylint: disable=invalid-name
+# pylint: enable=wrong-import-position
+# pylint: enable=using-constant-test
+# pylint: enable=import-error
+
 
 # -- General configuration ---------------------------------------------
 
@@ -51,6 +55,7 @@ templates_path = ["_templates"]
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
+# pylint: disable=invalid-name
 source_suffix = ".rst"
 
 # The master toctree document.
@@ -88,6 +93,8 @@ pygments_style = "sphinx"
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
+# Keep enums in order
+autodoc_member_order = "bysource"
 
 # -- Options for HTML output -------------------------------------------
 
@@ -176,6 +183,7 @@ texinfo_documents = [
         "Miscellaneous",
     ),
 ]
+# pylint: enable=invalid-name
 
 
 def _docstring(_app, _what, _name, _obj, _options, lines: List[str]) -> None:
