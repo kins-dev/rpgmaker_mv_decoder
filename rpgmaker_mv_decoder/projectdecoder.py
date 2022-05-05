@@ -8,7 +8,7 @@ from typing import List, TypeVar
 import click
 import magic
 
-from rpgmaker_mv_decoder.callback import Callback
+from rpgmaker_mv_decoder.callbacks import Callbacks
 from rpgmaker_mv_decoder.constants import OCT_STREAM, RPG_MAKER_MV_MAGIC
 from rpgmaker_mv_decoder.exceptions import FileFormatError, RPGMakerHeaderError
 from rpgmaker_mv_decoder.project import Project
@@ -25,7 +25,7 @@ class ProjectDecoder(Project):
         source: PurePath,
         destination: PurePath,
         key: str,
-        callbacks: Callback = Callback(),
+        callbacks: Callbacks = Callbacks(),
     ) -> _T:
         """`ProjectDecoder` constructor
 
@@ -99,7 +99,6 @@ class ProjectDecoder(Project):
         Returns:
         - `bytes`: If key was None, the key needed for a PNG image header, otherwise the decoded\
         file header.
-
         """
         file_id: bytes
         header: bytes
@@ -139,7 +138,7 @@ class ProjectDecoder(Project):
     ) -> None:
         """`decode` Decodes a project
 
-        Args:_
+        Args:
         - `detect_type` (`bool`): True means generate file extensions based on\
           file contents
         """

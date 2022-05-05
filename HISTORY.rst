@@ -2,6 +2,13 @@
 History
 =======
 
+1.3.1 (2022-05-05)
+------------------
+
+* Fixed minor API bugs
+* Fixed documentation
+* Added click overwrite prompt
+
 1.3.0 (2022-05-04)
 ------------------
 

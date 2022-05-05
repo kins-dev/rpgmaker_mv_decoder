@@ -4,10 +4,10 @@ rpgmaker\_mv\_decoder package
 Submodules
 ----------
 
-rpgmaker\_mv\_decoder.callback module
--------------------------------------
+rpgmaker\_mv\_decoder.callbacks module
+--------------------------------------
 
-.. automodule:: rpgmaker_mv_decoder.callback
+.. automodule:: rpgmaker_mv_decoder.callbacks
    :members:
    :undoc-members:
    :show-inheritance:

@@ -7,7 +7,7 @@ from typing import List, TypeVar
 import click
 import magic
 
-from rpgmaker_mv_decoder.callback import Callback
+from rpgmaker_mv_decoder.callbacks import Callbacks
 from rpgmaker_mv_decoder.constants import RPG_MAKER_MV_MAGIC
 from rpgmaker_mv_decoder.project import Project
 from rpgmaker_mv_decoder.utils import int_xor
@@ -23,7 +23,7 @@ class ProjectEncoder(Project):
         encoding_source: PurePath,
         destination: PurePath,
         key: str,
-        encoding_callbacks: Callback = Callback(),
+        encoding_callbacks: Callbacks = Callbacks(),
     ) -> _T:
         """`ProjectEncoder` constructor
 

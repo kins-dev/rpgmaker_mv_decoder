@@ -9,7 +9,7 @@ from typing import Dict, List, TypeVar
 import click
 from click._termui_impl import ProgressBar
 
-from rpgmaker_mv_decoder.callback import Callback
+from rpgmaker_mv_decoder.callbacks import Callbacks
 from rpgmaker_mv_decoder.constants import IHDR_SECTION, PNG_HEADER, RPG_MAKER_MV_MAGIC
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
 from rpgmaker_mv_decoder.project import Project
@@ -34,14 +34,18 @@ class ProjectKeyFinder(Project):
     def __init__(
         self: _T,
         source: PurePath,
-        callbacks: Callback = Callback(),
+        callbacks: Callbacks = Callbacks(),
     ) -> _T:
         """`ProjectKeyFinder` Constructor
 
         Args:
         - `source` (`PurePath`): Files to use to find a key
         - `callbacks` (`Callback`, optional): Callbacks for specific events. Defaults to \
-          `Callback()`."""
+          `Callback()`.
+
+        Returns:
+        - `ProjectKeyFinder`: Object to find key for files
+        """
         Project.__init__(self, source, None, None, callbacks)
         self._keys: Dict[str, int] = {}
         self._count: int = 0

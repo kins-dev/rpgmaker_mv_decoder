@@ -13,7 +13,7 @@ from typing import TypeVar
 
 import click
 
-from rpgmaker_mv_decoder.callback import Callback
+from rpgmaker_mv_decoder.callbacks import Callbacks
 from rpgmaker_mv_decoder.projectpaths import ProjectPaths
 
 _T = TypeVar("_T", bound="Project")
@@ -27,7 +27,7 @@ class Project(ABC):
         source_path: PurePath = None,
         destination_path: PurePath = None,
         key: str = None,
-        callbacks: Callback = Callback(),
+        callbacks: Callbacks = Callbacks(),
     ) -> _T:
         """`Project` constructor
 
@@ -40,6 +40,9 @@ class Project(ABC):
 
         Returns:
         - `Project`: Object
+
+        Notes:
+        - This is an Abstract Base Class, do not use this directly
         """
         self.project_paths: ProjectPaths = ProjectPaths(source_path, destination_path)
         self.key = key

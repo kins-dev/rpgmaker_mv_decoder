@@ -9,7 +9,7 @@ class Error(Exception):
     """
 
     def __init__(self, message: str):
-        """`__init__` constructor
+        """`Error` constructor
 
         Args:
         - `message` (`str`): Explanation of the error
@@ -35,7 +35,7 @@ class FileFormatError(Error):
     """
 
     def __init__(self, expression: str, message: str):
-        """`__init__` constructor
+        """`FileFormatError` constructor
 
         _extended_summary_
 

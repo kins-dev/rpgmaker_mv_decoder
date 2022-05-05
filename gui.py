@@ -13,7 +13,7 @@ from pygubu.widgets.pathchooserinput import PathChooserInput
 
 import rpgmaker_mv_decoder
 from icon_data import ABOUT_ICON, TITLE_BAR_ICON
-from rpgmaker_mv_decoder.callback import Callback
+from rpgmaker_mv_decoder.callbacks import Callbacks
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
 from rpgmaker_mv_decoder.projectdecoder import ProjectDecoder
 from rpgmaker_mv_decoder.projectencoder import ProjectEncoder
@@ -256,7 +256,7 @@ class _GuiApp:
         self.src_path = ""
         self.dst_path = ""
         self.gui_key = ""
-        self.callbacks = Callback(self.progress.set_progress, self._overwrite_cb)
+        self.callbacks = Callbacks(self.progress.set_progress, self._overwrite_cb)
 
     def _build_frame_act(self):
         self.frame_action = ttk.Frame(self.window)
