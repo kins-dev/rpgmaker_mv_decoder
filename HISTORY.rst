@@ -2,7 +2,7 @@
 History
 =======
 
-1.3.1 (2022-05-05)
+1.4.0 (2022-05-05)
 ------------------
 
 * Fixed minor API bugs
@@ -10,6 +10,8 @@ History
 * Added click overwrite prompt
 * Added callback for info messages (not in use yet)
 * Added callback message enums (not in use yet)
+* Renamed callback module to callbacks
+* Refactored messaging to user
 
 1.3.0 (2022-05-04)
 ------------------
