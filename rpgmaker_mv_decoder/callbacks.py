@@ -17,11 +17,25 @@ class MessageType(Enum):
     WARNING = auto()
     ERROR = auto()
 
+    def get_message_header(self) -> str:
+        """`get_message_header` Header for this message type
+
+        Returns:
+        - `str`: Header to prepend to the message
+        """
+        if self & MessageType.ERROR:
+            return "ERROR"
+        if self & MessageType.WARNING:
+            return "Warning"
+        if self & MessageType.INFO:
+            return "Info"
+        return "DEBUG"
+
 
 class MessageResponse(Flag):
     """`MessageResponse` types of responses the user can give
 
-    Shows OK unless NO is also specified, which then changes OK to YES
+    Show `OK` unless `NO` is also specified, which then `OK` should be `YES`
     """
 
     NONE = 0
@@ -57,6 +71,36 @@ def _default_progressbar_callback(_: ProgressBar) -> bool:
     return False
 
 
+def click_prompt(
+    message: str,
+    message_type: MessageType = MessageType.DEBUG,
+    responses: MessageResponse = MessageResponse.OK,
+) -> bool:
+    """`click_prompt` _summary_
+
+    _extended_summary_
+
+    Args:
+    - `message` (`str`): _description_
+    - `message_type` (`MessageType`, optional): _description_. Defaults to `MessageType.DEBUG`.
+    - `responses` (`MessageResponse`, optional): _description_. Defaults to `MessageResponse.OK`.
+
+    Returns:
+    - `bool`: _description_
+    """
+    choice_list: List[str] = responses.get_responses()
+    choice: str = click.prompt(
+        f"{message_type.get_message_header()}: {message}",
+        default=choice_list[-1],
+        type=click.Choice(choice_list, False),
+    )
+    if choice == "Cancel":
+        return None
+    if choice == "No":
+        return False
+    return True
+
+
 def default_overwrite_callback(filename: str) -> bool:
     """`default_overwrite_callback` When files are about to be overwritten
 
@@ -68,16 +112,11 @@ def default_overwrite_callback(filename: str) -> bool:
     Returns:
     - `bool`: `True` allows the file to be overwritten, `None` cancels the operation
     """
-    choice: str = click.prompt(
-        f"Do you want to overwrite {filename}?",
-        default="Cancel",
-        type=click.Choice(["Yes", "No", "Cancel"], False),
+    return click_prompt(
+        f"About to overwrite {filename}. Continue?",
+        MessageType.WARNING,
+        MessageResponse.YES_NO_CANCEL,
     )
-    if choice == "Cancel":
-        return None
-    if choice == "Yes":
-        return True
-    return False
 
 
 def _default_error_callback(_: str) -> bool:
