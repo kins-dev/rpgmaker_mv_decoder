@@ -19,6 +19,12 @@ class ProjectPaths:
         source: PurePath = None,
         destination: PurePath = None,
     ) -> _T:
+        """`ProjectPaths` Constructor
+
+        Args:
+        - `source` (`PurePath`, optional): Files to operate on. Defaults to `None`.
+        - `destination` (`PurePath`, optional): Where to save the files. Defaults to `None`.
+        """
         self.source: PurePath = source
         self.destination: PurePath = destination
         self._cached_output_directory: PurePath = None

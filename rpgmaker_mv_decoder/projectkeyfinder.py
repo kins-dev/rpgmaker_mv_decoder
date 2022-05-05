@@ -36,6 +36,12 @@ class ProjectKeyFinder(Project):
         source: PurePath,
         callbacks: Callback = Callback(),
     ) -> _T:
+        """`ProjectKeyFinder` Constructor
+
+        Args:
+        - `source` (`PurePath`): Files to use to find a key
+        - `callbacks` (`Callback`, optional): Callbacks for specific events. Defaults to \
+          `Callback()`."""
         Project.__init__(self, source, None, None, callbacks)
         self._keys: Dict[str, int] = {}
         self._count: int = 0
