@@ -8,6 +8,8 @@ History
 * Fixed minor API bugs
 * Fixed documentation
 * Added click overwrite prompt
+* Added callback for info messages (not in use yet)
+* Added callback message enums (not in use yet)
 
 1.3.0 (2022-05-04)
 ------------------
