@@ -1,5 +1,6 @@
 """`promptresponse.py` How the user can respond to a prompt"""
 from enum import Flag, auto
+from tkinter import messagebox
 from typing import List, TypeVar
 
 _T = TypeVar("_T", bound="PromptResponse")
@@ -43,3 +44,19 @@ class PromptResponse(Flag):
             if self & PromptResponse.CANCEL:
                 responses.append("Cancel")
         return responses
+
+    def get_messagebox_response(self: _T) -> str:
+        """`get_messagebox_response` gets the TK messagebox button set for this response
+
+        Returns:
+        - `str`: The TK messagebox button set for this response. None if nothing matches
+        """
+        if self == PromptResponse.YES_NO_CANCEL:
+            return messagebox.YESNOCANCEL
+        if self == PromptResponse.YES_NO:
+            return messagebox.YESNO
+        if self == PromptResponse.OK_CANCEL:
+            return messagebox.OKCANCEL
+        if self == PromptResponse.OK:
+            return messagebox.OK
+        return None

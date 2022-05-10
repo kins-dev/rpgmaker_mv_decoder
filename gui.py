@@ -4,6 +4,7 @@ import pathlib
 import threading
 import tkinter as tk
 import webbrowser
+from time import sleep
 from tkinter import messagebox, ttk
 from typing import Dict
 
@@ -15,9 +16,11 @@ import rpgmaker_mv_decoder
 from icon_data import ABOUT_ICON, TITLE_BAR_ICON
 from rpgmaker_mv_decoder.callbacks import Callbacks
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
+from rpgmaker_mv_decoder.messagetypes import MessageType
 from rpgmaker_mv_decoder.projectdecoder import ProjectDecoder
 from rpgmaker_mv_decoder.projectencoder import ProjectEncoder
 from rpgmaker_mv_decoder.projectkeyfinder import ProjectKeyFinder
+from rpgmaker_mv_decoder.promptresponse import PromptResponse
 
 PROJECT_PATH = pathlib.Path(__file__).parent
 PROJECT_UI = PROJECT_PATH / "gui.ui"
@@ -233,6 +236,27 @@ Released under the MIT license. See GitHub for more details.
         webbrowser.open(self.url_pypi, new=0, autoraise=True)
 
 
+def _prompt_cb(message_type: MessageType, message: str, responses: PromptResponse) -> bool:
+    options: Dict[str, str] = {}
+    # needed to prevent UI deadlock with TK
+    sleep(0.01)
+    options["icon"] = message_type.get_icon()
+    options["type"] = responses.get_messagebox_response()
+    options["title"] = ""
+    options[
+        "message"
+    ] = f"""{message}
+
+Do you want to do this?"""
+    ret = messagebox.Message(**options).show()
+    ret = str(ret)
+    if ret == messagebox.CANCEL:
+        return None
+    if ret == messagebox.OK:
+        return True
+    return ret == messagebox.YES
+
+
 class _GuiApp:
     # pylint: disable=too-many-instance-attributes,too-few-public-methods
     def __init__(self, master=None):
@@ -256,7 +280,7 @@ class _GuiApp:
         self.src_path = ""
         self.dst_path = ""
         self.gui_key = ""
-        self.callbacks = Callbacks(self.progress.set_progress, self._overwrite_cb)
+        self.callbacks = Callbacks(self.progress.set_progress, prompt_callback=_prompt_cb)
 
     def _build_frame_act(self):
         self.frame_action = ttk.Frame(self.window)
@@ -438,9 +462,12 @@ class _GuiApp:
         threading.Thread(target=_show_dialog_decode).start()
 
         def _decode_files():
-            ProjectDecoder(
+            decoder: ProjectDecoder = ProjectDecoder(
                 self.src_path, self.dst_path, self.entry_key.get(), self.callbacks
-            ).decode(self.detect_file_ext.get() == "1")
+            )
+            if self.overwrite.get() == "1":
+                decoder.overwrite = True
+            decoder.decode(self.detect_file_ext.get() == "1")
             self._hide_dialog()
             self._set_button_state()
 
@@ -454,32 +481,17 @@ class _GuiApp:
         threading.Thread(target=_show_dialog_encode).start()
 
         def _encode_files():
-            ProjectEncoder(
+            encoder: ProjectEncoder = ProjectEncoder(
                 self.src_path, self.dst_path, self.entry_key.get(), self.callbacks
-            ).encode()
+            )
+            if self.overwrite.get() == "1":
+                encoder.overwrite = True
+            encoder.encode()
             self._hide_dialog()
             self._set_button_state()
 
         threading.Thread(target=_encode_files).start()
         self._disable_buttons()
-
-    def _overwrite_cb(self, filename: str) -> bool:
-        options: Dict[str, str] = {}
-        if self.overwrite.get() == "1":
-            return (True, True)
-        options["icon"] = messagebox.WARNING
-        options["type"] = messagebox.YESNOCANCEL
-        options["title"] = "Overwriting files"
-        options[
-            "message"
-        ] = f"""The file:
-    {filename}
-Is about to be overwritten. Do you want to do this?"""
-        ret = messagebox.Message(**options).show()
-        ret = str(ret)
-        if ret == messagebox.CANCEL:
-            return None
-        return ret == messagebox.YES
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 """`messagetypes.py` Types of messages for the UI"""
 from enum import Enum, auto
+from tkinter import messagebox
 from typing import TypeVar
 
 _T = TypeVar("_T", bound="MessageType")
@@ -26,3 +27,17 @@ class MessageType(Enum):
         if self == MessageType.INFO:
             return ""
         return "Debug: "
+
+    def get_icon(self: _T) -> str:
+        """`get_icon` Returns the TK icon for this message type
+
+        Returns:
+        - `str`: The TK icon for this message type
+        """
+        if self == MessageType.ERROR:
+            return messagebox.ERROR
+        if self == MessageType.WARNING:
+            return messagebox.WARNING
+        if self == MessageType.INFO:
+            return messagebox.INFO
+        return messagebox.QUESTION

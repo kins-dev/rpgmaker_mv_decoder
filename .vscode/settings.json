@@ -12,6 +12,7 @@
         "mkvirtualenv",
         "noconfirm",
         "noupx",
+        "OKCANCEL",
         "padx",
         "pady",
         "pygubu",

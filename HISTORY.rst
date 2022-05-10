@@ -2,14 +2,15 @@
 History
 =======
 
-1.4.0 (2022-05-05)
+1.4.0 (2022-05-10)
 ------------------
 
 * Fixed minor API bugs
 * Fixed documentation
-* Added click overwrite prompt
-* Added callback for info messages (not in use yet)
-* Added callback message enums (not in use yet)
+* Added cli overwrite prompt
+* New messaging system
+* New prompt system
+* Updates to the progress UI
 * Renamed callback module to callbacks
 * Refactored messaging to user
 * Better package information

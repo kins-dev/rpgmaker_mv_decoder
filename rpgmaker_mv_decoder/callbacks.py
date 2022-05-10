@@ -85,7 +85,7 @@ class Callbacks:
             [MessageType, str, PromptResponse, bool], bool
         ] = default_prompt_callback,
         message_callback: Callable[[MessageType, str, bool], None] = default_message_callback,
-    ):
+    ) -> _T:
         """`Callbacks` constructor
 
         Args:

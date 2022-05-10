@@ -9,7 +9,7 @@ _T = TypeVar("_T", bound="ClickDisplay")
 class ClickDisplay:
     """`ClickDisplay` class for handling item display in click progress bar"""
 
-    def __init__(self, items: Iterable[Path]):
+    def __init__(self, items: Iterable[Path]) -> _T:
         """`ClickDisplay` Constructor
 
         Args:
