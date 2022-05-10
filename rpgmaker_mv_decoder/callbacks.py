@@ -7,10 +7,25 @@ from typing import Callable, List, TypeVar
 import click
 from click._termui_impl import ProgressBar
 
+from rpgmaker_mv_decoder import __version__ as VERSION
 from rpgmaker_mv_decoder.messagetypes import MessageType
 from rpgmaker_mv_decoder.promptresponse import PromptResponse
 
 _T = TypeVar("_T", bound="Callbacks")
+
+
+def show_version(ctx: click.Context, _, value: bool):
+    """`show_version` Click callback that displays the version number to the user
+
+    Args:
+    - `ctx` (`click.Context`): context for options parsing
+    - `_` (`_type_`): ignored
+    - `value` (`bool`): if true, show the version number and exit
+    """
+    if not value or ctx.resilient_parsing:
+        return
+    click.echo(f"Version: {VERSION}")
+    ctx.exit()
 
 
 def _default_progressbar_callback(_: ProgressBar) -> bool:

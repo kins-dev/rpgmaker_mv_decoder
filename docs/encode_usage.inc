@@ -14,4 +14,6 @@
       <Key>          The encoding key to use.
 
     Options:
-      --help  Show this message and exit.
+      --version    Prints the version number
+      --overwrite  Overwrite files without prompting
+      --help       Show this message and exit.

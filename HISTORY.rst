@@ -14,6 +14,7 @@ History
 * Renamed callback module to callbacks
 * Refactored messaging to user
 * Better package information
+* Added --overwrite and --version to options for CLI tools
 
 1.3.0 (2022-05-04)
 ------------------

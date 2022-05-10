@@ -31,6 +31,9 @@ CLI_DECODE_KEY_STR = (
 
 CLI_ENCODE_KEY_STR = "The encoding key to use."
 
+CLI_OVERWRITE_HELP = "Overwrite files without prompting"
+CLI_VERSION_HELP = "Prints the version number"
+
 CMD_HELP_DECODE = "Decodes RPGMaker files under <Source> directory to <Destination> directory."
 
 CMD_HELP_ENCODE = "Encodes image and audio files under <Source> directory."

@@ -109,6 +109,8 @@ Decoding
      --detect_type  Detect the file type and use the associated file extension.
                     By default .rpgmvp becomes .png and .rpgmvo becomes .ogg
                     regardless of the file contents.
+     --version      Prints the version number
+     --overwrite    Overwrite files without prompting
      --help         Show this message and exit.
 
 Encoding
@@ -129,4 +131,6 @@ Encoding
      <Key>          The encoding key to use.
 
    Options:
-     --help  Show this message and exit.
+     --version    Prints the version number
+     --overwrite  Overwrite files without prompting
+     --help       Show this message and exit.

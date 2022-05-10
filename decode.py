@@ -4,8 +4,16 @@ import sys
 
 import click
 
+from rpgmaker_mv_decoder.callbacks import show_version
 from rpgmaker_mv_decoder.cli_help import DecodeHelp
-from rpgmaker_mv_decoder.constants import CLICK_DST_PATH, CLICK_SRC_PATH, CMD_HELP_DECODE, TYPE_HELP
+from rpgmaker_mv_decoder.constants import (
+    CLI_OVERWRITE_HELP,
+    CLI_VERSION_HELP,
+    CLICK_DST_PATH,
+    CLICK_SRC_PATH,
+    CMD_HELP_DECODE,
+    TYPE_HELP,
+)
 from rpgmaker_mv_decoder.projectdecoder import ProjectDecoder
 from rpgmaker_mv_decoder.projectkeyfinder import ProjectKeyFinder
 
@@ -15,11 +23,21 @@ from rpgmaker_mv_decoder.projectkeyfinder import ProjectKeyFinder
 @click.argument("destination", required=True, metavar="<Destination>", type=CLICK_DST_PATH)
 @click.argument("key", type=str, required=False, metavar="[<Key>]")
 @click.option("--detect_type", is_flag=True, help=TYPE_HELP)
+@click.option(
+    "--version",
+    is_flag=True,
+    callback=show_version,
+    expose_value=False,
+    is_eager=True,
+    help=CLI_VERSION_HELP,
+)
+@click.option("--overwrite", is_flag=True, help=CLI_OVERWRITE_HELP)
 def decode(
     source: click.Path = None,
     destination: click.Path = None,
     key: str = None,
     detect_type: bool = False,
+    overwrite: bool = False,
 ) -> None:
     """`decode` The main function
 
@@ -31,7 +49,10 @@ def decode(
     """
     if key is None:
         key = ProjectKeyFinder(source).find_key()
-    ProjectDecoder(source, destination, key).decode(detect_type)
+    decoder = ProjectDecoder(source, destination, key)
+    if overwrite:
+        decoder.overwrite = True
+    decoder.decode(detect_type)
     return 0
 
 
