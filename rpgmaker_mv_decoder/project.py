@@ -14,7 +14,9 @@ from typing import TypeVar
 import click
 
 from rpgmaker_mv_decoder.callbacks import Callbacks
+from rpgmaker_mv_decoder.messagetypes import MessageType
 from rpgmaker_mv_decoder.projectpaths import ProjectPaths
+from rpgmaker_mv_decoder.promptresponse import PromptResponse
 
 _T = TypeVar("_T", bound="Project")
 
@@ -44,7 +46,7 @@ class Project(ABC):
         Notes:
         - This is an Abstract Base Class, do not use this directly
         """
-        self.project_paths: ProjectPaths = ProjectPaths(source_path, destination_path)
+        self._project_paths: ProjectPaths = ProjectPaths(source_path, destination_path)
         self.key = key
         self._callbacks = callbacks
 
@@ -63,7 +65,11 @@ class Project(ABC):
         # needed to prevent UI deadlock with TK
         sleep(0.01)
         if Path(filename).exists():
-            overwrite = self._callbacks.overwrite(filename.name)
+            overwrite = self._callbacks.prompt(
+                MessageType.WARNING,
+                f'''Going to overwrite existing file: "{filename.name}"''',
+                PromptResponse.YES_SKIP_CANCEL,
+            )
             if overwrite is None:
                 return False
         if overwrite:
@@ -75,16 +81,10 @@ class Project(ABC):
                 file.write(data)
         return True
 
-    def warning(self: _T, text: str) -> bool:
-        """`Warning` Runs the warning callback
-
-        Args:
-        - `text` (`str`): Text for warning
-
-        Returns:
-        - `bool`: `True` if the operation should continue
-        """
-        return self._callbacks.warning(text)
+    @property
+    def project_paths(self: _T) -> ProjectPaths:
+        """Gets the `project_paths`"""
+        return self._project_paths
 
     @property
     def key(self: _T) -> str:

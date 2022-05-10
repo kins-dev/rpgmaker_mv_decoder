@@ -8,6 +8,7 @@ import click
 import magic
 
 from rpgmaker_mv_decoder.callbacks import Callbacks
+from rpgmaker_mv_decoder.clickdisplay import ClickDisplay
 from rpgmaker_mv_decoder.constants import RPG_MAKER_MV_MAGIC
 from rpgmaker_mv_decoder.project import Project
 from rpgmaker_mv_decoder.utils import int_xor
@@ -80,12 +81,18 @@ class ProjectEncoder(Project):
     def encode(self: _T):
         """`encode` Encodes the project"""
         files: List[Path] = self.project_paths.all_files
-        click.echo(f"Reading from: '{self.project_paths.source}'")
-        click.echo(f"Writing to:   '{self.project_paths.output_directory}'")
-        with click.progressbar(files, label="Encoding files") as all_files:
+        self._callbacks.info(f"Reading from: '{self.project_paths.source}'")
+        self._callbacks.info(f"Writing to:   '{self.project_paths.output_directory}'")
+        click_display = ClickDisplay(files)
+        with click.progressbar(
+            files,
+            label="Encoding files",
+            width=0,
+            item_show_func=click_display.show_item,
+        ) as files_to_encode:
             filename: Path
-            for filename in all_files:
-                if self._callbacks.progressbar(all_files):
+            for filename in files_to_encode:
+                if self._callbacks.progressbar(files_to_encode):
                     break
                 if not self.encode_file(filename):
                     break

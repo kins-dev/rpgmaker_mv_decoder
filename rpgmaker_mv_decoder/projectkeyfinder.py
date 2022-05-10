@@ -10,6 +10,7 @@ import click
 from click._termui_impl import ProgressBar
 
 from rpgmaker_mv_decoder.callbacks import Callbacks
+from rpgmaker_mv_decoder.clickdisplay import ClickDisplay
 from rpgmaker_mv_decoder.constants import IHDR_SECTION, PNG_HEADER, RPG_MAKER_MV_MAGIC
 from rpgmaker_mv_decoder.exceptions import NoValidFilesFound
 from rpgmaker_mv_decoder.project import Project
@@ -82,10 +83,14 @@ class ProjectKeyFinder(Project):
         """
         item: str = list(self.keys.keys())[0]
         ratio: float = self.keys[item] / (self._count - (len(self.keys) - 1))
-        click.echo(f"{ratio*100:.2f}% confidence for images")
-        click.echo(f"Possible keys: {item} used in {self.keys[item]} of {self._count} images")
+        self._callbacks.info(f"{ratio*100:.2f}% confidence for images")
+        self._callbacks.info(
+            f"Possible keys: {item} used in {self.keys[item]} of {self._count} images"
+        )
         for item in list(self.keys.keys())[1:10]:
-            click.echo(f"               {item} used in {self.keys[item]} of {self._count} images")
+            self._callbacks.info(
+                f"               {item} used in {self.keys[item]} of {self._count} images"
+            )
 
     def __get_likely_key(self: _T) -> None:
         """`__get_likely_key` Takes a list of keys and returns the most likely key
@@ -106,13 +111,15 @@ class ProjectKeyFinder(Project):
 
     def _report_results(self: _T, item: str):
         percentage: float = (self._count * 100.0) / self._total
-        click.echo(None)
+        self._callbacks.info("")
         if self._skipped > 0:
-            click.echo(f"Found {self._skipped} files ending with .rpgmvp that were not PNG images")
-        click.echo(
-            f"""Found the same key for {self._count}/{self._total} ({percentage:0.02f}%) files
-Using '{item}' as the key"""
+            self._callbacks.info(
+                f"Found {self._skipped} files ending with .rpgmvp that were not PNG images"
+            )
+        self._callbacks.info(
+            f"Found the same key for {self._count}/{self._total} ({percentage:0.02f}%) files"
         )
+        self._callbacks.info(f"Using '{item}' as the key")
 
     def _handle_files(self: _T, all_files: ProgressBar) -> int:
         self._total = all_files.length
@@ -163,7 +170,10 @@ Using '{item}' as the key"""
         if not self.project_paths.source:
             raise NoValidFilesFound("Invalid source path")
         files: List[Path] = sorted(Path(self.project_paths.source).glob("**/*.rpgmvp"))
-        with click.progressbar(files, label="Finding key") as all_files:
+        click_display = ClickDisplay(files)
+        with click.progressbar(
+            files, label="Finding key", item_show_func=click_display.show_item
+        ) as all_files:
             self._handle_files(all_files)
 
         if self._count == 0:

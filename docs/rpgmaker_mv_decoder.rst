@@ -20,6 +20,14 @@ rpgmaker\_mv\_decoder.cli\_help module
    :undoc-members:
    :show-inheritance:
 
+rpgmaker\_mv\_decoder.clickdisplay module
+-----------------------------------------
+
+.. automodule:: rpgmaker_mv_decoder.clickdisplay
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 rpgmaker\_mv\_decoder.constants module
 --------------------------------------
 
@@ -32,6 +40,14 @@ rpgmaker\_mv\_decoder.exceptions module
 ---------------------------------------
 
 .. automodule:: rpgmaker_mv_decoder.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rpgmaker\_mv\_decoder.messagetypes module
+-----------------------------------------
+
+.. automodule:: rpgmaker_mv_decoder.messagetypes
    :members:
    :undoc-members:
    :show-inheritance:
@@ -72,6 +88,14 @@ rpgmaker\_mv\_decoder.projectpaths module
 -----------------------------------------
 
 .. automodule:: rpgmaker_mv_decoder.projectpaths
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rpgmaker\_mv\_decoder.promptresponse module
+-------------------------------------------
+
+.. automodule:: rpgmaker_mv_decoder.promptresponse
    :members:
    :undoc-members:
    :show-inheritance:

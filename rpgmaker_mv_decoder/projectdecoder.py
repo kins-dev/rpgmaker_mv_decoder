@@ -9,6 +9,7 @@ import click
 import magic
 
 from rpgmaker_mv_decoder.callbacks import Callbacks
+from rpgmaker_mv_decoder.clickdisplay import ClickDisplay
 from rpgmaker_mv_decoder.constants import OCT_STREAM, RPG_MAKER_MV_MAGIC
 from rpgmaker_mv_decoder.exceptions import FileFormatError, RPGMakerHeaderError
 from rpgmaker_mv_decoder.project import Project
@@ -142,22 +143,28 @@ class ProjectDecoder(Project):
         - `detect_type` (`bool`): True means generate file extensions based on\
           file contents
         """
-        click.echo(f"Reading from: '{self.project_paths.source}'")
-        click.echo(f"Writing to:   '{self.project_paths.output_directory}'")
+        self._callbacks.info(f"Reading from: '{self.project_paths.source}'")
+        self._callbacks.info(f"Writing to:   '{self.project_paths.output_directory}'")
         files: List[Path] = self.project_paths.encoded_files
-        with click.progressbar(files, label="Decoding files") as all_files:
+        click_display = ClickDisplay(files)
+        with click.progressbar(
+            files,
+            label="Decoding files",
+            width=0,
+            item_show_func=click_display.show_item,
+        ) as files_to_decode:
             filename: Path
-            for filename in all_files:
-                if self._callbacks.progressbar(all_files):
+            for filename in files_to_decode:
+                if self._callbacks.progressbar(files_to_decode):
                     break
                 try:
                     if not self.decode_file(filename, detect_type):
                         break
-                except RPGMakerHeaderError as ffe:
-                    self._callbacks.warning(ffe.expression)
+                except RPGMakerHeaderError:
+                    warning_text: str = f'Invalid header found on "{filename}", skipping.'
+                    self._callbacks.warning(warning_text)
                 except FileFormatError:
-                    click.echo()
-                    click.echo(
+                    self._callbacks.warning(
                         "Found octlet stream, key is probably incorrect, "
                         f"skipping {click.format_filename(str(filename))}"
                     )

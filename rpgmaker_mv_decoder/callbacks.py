@@ -2,133 +2,76 @@
 
 Used to handle callbacks in a single object rather than multiple parameters
 """
-from enum import Enum, Flag, auto
-from typing import Callable, List
+from typing import Callable, List, TypeVar
 
 import click
 from click._termui_impl import ProgressBar
 
+from rpgmaker_mv_decoder.messagetypes import MessageType
+from rpgmaker_mv_decoder.promptresponse import PromptResponse
 
-class MessageType(Enum):
-    """`MessageType` Is a message debug, informational, warning or error"""
-
-    DEBUG = auto()
-    INFO = auto()
-    WARNING = auto()
-    ERROR = auto()
-
-    def get_message_header(self) -> str:
-        """`get_message_header` Header for this message type
-
-        Returns:
-        - `str`: Header to prepend to the message
-        """
-        if self & MessageType.ERROR:
-            return "ERROR"
-        if self & MessageType.WARNING:
-            return "Warning"
-        if self & MessageType.INFO:
-            return "Info"
-        return "DEBUG"
-
-
-class MessageResponse(Flag):
-    """`MessageResponse` types of responses the user can give
-
-    Show `OK` unless `NO` is also specified, which then `OK` should be `YES`
-    """
-
-    NONE = 0
-    OK = auto()
-    YES = OK
-    NO = auto()
-    YES_NO = YES | NO
-    CANCEL = auto()
-    OK_CANCEL = OK | CANCEL
-    YES_NO_CANCEL = YES | NO | CANCEL
-
-    def get_responses(self) -> List[str]:
-        """`get_responses` List of response that this enum represents
-
-        Returns:
-        - `List[str]`: Possible user response to this message
-        """
-        responses: List[str] = []
-        if self:
-            if self & MessageResponse.OK:
-                if self & MessageResponse.NO:
-                    responses.append("Yes")
-                else:
-                    responses.append("OK")
-            if self & MessageResponse.NO:
-                responses.append("No")
-            if self & MessageResponse.CANCEL:
-                responses.append("Cancel")
-        return responses
+_T = TypeVar("_T", bound="Callbacks")
 
 
 def _default_progressbar_callback(_: ProgressBar) -> bool:
     return False
 
 
-def click_prompt(
-    message: str,
+def default_message_callback(
+    level: MessageType,
+    text: str,
+) -> None:
+    """`default_message_callback` default handling of messages
+
+    Args:
+    - `level` (`MessageType`): What kind of message this is
+    - `text` (`str`): What to display
+    """
+    text = f"{level.get_message_header()}{text}"
+    if level == MessageType.DEBUG:
+        click.secho(text, bold=True, fg="blue")
+    elif level == MessageType.INFO:
+        click.echo(text)
+    elif level == MessageType.WARNING:
+        click.secho(text, bold=True, fg="yellow")
+    elif level == MessageType.ERROR:
+        click.secho(text, bold=True, fg="red")
+
+
+def default_prompt_callback(
     message_type: MessageType = MessageType.DEBUG,
-    responses: MessageResponse = MessageResponse.OK,
+    message: str = "",
+    responses: PromptResponse = PromptResponse.OK,
 ) -> bool:
-    """`click_prompt` _summary_
-
-    _extended_summary_
+    """`default_prompt_callback` default prompt
 
     Args:
-    - `message` (`str`): _description_
-    - `message_type` (`MessageType`, optional): _description_. Defaults to `MessageType.DEBUG`.
-    - `responses` (`MessageResponse`, optional): _description_. Defaults to `MessageResponse.OK`.
+    - `message_type` (`MessageType`, optional): What type of message is this. Defaults to\
+      `MessageType.DEBUG`.
+    - `message` (`str`, optional): What to display to the user. Defaults to `""`.
+    - `responses` (`PromptResponse`, optional): What kind of repsones can the user give.\
+      Defaults to `PromptResponse.OK`.
 
     Returns:
-    - `bool`: _description_
+    - `bool`: `True` if the operation should run the action, `False` if the action should\
+      be skipped and `None` if the operation should be canceled.
     """
-    choice_list: List[str] = responses.get_responses()
-    choice: str = click.prompt(
-        f"{message_type.get_message_header()}: {message}",
-        default=choice_list[-1],
-        type=click.Choice(choice_list, False),
-    )
-    if choice == "Cancel":
-        return None
-    if choice == "No":
-        return False
+    default_message_callback(message_type, message)
+    if responses != PromptResponse.NONE:
+        choice_list: List[str] = responses.get_responses()
+
+        choice: str = click.prompt(
+            "Do you want to do this?",
+            default=choice_list[-1],
+            type=click.Choice(choice_list, False),
+        )
+        if choice == "Cancel":
+            return None
+        if choice == "Skip":
+            return False
+        if choice == "No":
+            return False
     return True
-
-
-def default_overwrite_callback(filename: str) -> bool:
-    """`default_overwrite_callback` When files are about to be overwritten
-
-    This is the default action when no callback is given
-
-    Args:
-    - `filename` (`str`): File to be overwitten
-
-    Returns:
-    - `bool`: `True` allows the file to be overwritten, `None` cancels the operation
-    """
-    return click_prompt(
-        f"About to overwrite {filename}. Continue?",
-        MessageType.WARNING,
-        MessageResponse.YES_NO_CANCEL,
-    )
-
-
-def _default_error_callback(_: str) -> bool:
-    return False
-
-
-def _default_warning_callback(_: str) -> bool:
-    return False
-
-
-def _default_info_callback(_: str) -> bool:
-    return False
 
 
 class Callbacks:
@@ -138,37 +81,29 @@ class Callbacks:
     def __init__(
         self,
         progressbar_callback: Callable[[ProgressBar], bool] = _default_progressbar_callback,
-        overwrite_callback: Callable[[str], bool] = default_overwrite_callback,
-        error_callback: Callable[[str], bool] = _default_error_callback,
-        warning_callback: Callable[[str], bool] = _default_warning_callback,
-        info_callback: Callable[[str], bool] = _default_info_callback,
+        prompt_callback: Callable[
+            [MessageType, str, PromptResponse, bool], bool
+        ] = default_prompt_callback,
+        message_callback: Callable[[MessageType, str, bool], None] = default_message_callback,
     ):
-        """`Callbacks` Callbacks on specific events
+        """`Callbacks` constructor
 
         Args:
-        - `progressbar_callback` (`Callable[[ProgressBar], bool]`, optional): What to call when \
-          the progress bar updates. Defaults to `_default_progressbar_callback`.
-        - `overwrite_callback` (`Callable[[str], bool]`, optional): What to call when files are \
-          about to be overwitten. Defaults to `_default_overwrite_callback`.
-        - `error_callback` (`Callable[[str], bool]`, optional): What to call on error. Defaults \
-          to `_default_error_callback`.
-        - `warning_callback` (`Callable[[str], bool]`, optional): What to call on a warning. \
-          Defaults to `_default_warning_callback`.
-        - `info_callback` (`Callable[[str], bool]`, optional): What to call on an info message. \
-          Defaults to `_default_info_callback`.
-
-        Returns:
-        - `Callbacks`: Object holding various callbacks
+        - `progressbar_callback` (`Callable[ [ProgressBar], bool ]`, optional): How to display \
+          progress. Defaults to `_default_progressbar_callback`.
+        - `prompt_callback` (`Callable[ [MessageType, str, PromptResponse], bool ]`, optional):\
+          How to ask the user for the appropriate action. Defaults to `default_prompt_callback`.
+        - `message_callback` (`Callable[[MessageType, str], None]`, optional): What to do when\
+          displaying messages. Defaults to `default_message_callback`.
         """
         self._progressbar_callback = progressbar_callback
-        self._overwrite_callback = overwrite_callback
-        self._error_callback = error_callback
-        self._warning_callback = warning_callback
-        self._info_callback = info_callback
+        self._message_callback = message_callback
+        self._prompt_callback = prompt_callback
+        self._in_progress: bool = False
 
     # pylint: enable=too-many-arguments
     @property
-    def progressbar(self):
+    def progressbar(self: _T):
         """`progressbar` callback for updating the progress of the operation
 
         Returns:
@@ -179,42 +114,58 @@ class Callbacks:
         return self._progressbar_callback
 
     @property
-    def overwrite(self):
-        """`overwrite` callback executed when a file is about to be overwitten
+    def prompt(self: _T) -> Callable[[MessageType, str, PromptResponse], bool]:
+        """`prompt` callback for asking the user a question
 
         Returns:
-        - `Callable[[str], bool]`: Function to call. Path to overwite should be specified \
-          as the string. If the function returns `True` the file should be overwritten. If the \
-          user cancels the operation this function should return None
+        - `Callable[[MessageType, str, PromptResponse], bool]`: Function to call. First\
+          argument is the type of message, second is the message, third is the responses\
+          a user can give.
         """
-        return self._overwrite_callback
+        return self._prompt_callback
 
     @property
-    def error(self):
-        """`error` callback executed when an error occurs
+    def message(self: _T) -> Callable[[MessageType, str], None]:
+        """`message` callback for displaying a message to the user
 
         Returns:
-        - `Callable[[str], bool]`: Function to call. Error message should be specified via \
-          the parameter. If the user cancels the operation, this should return `True`
+        - `Callable[[MessageType, str], None]`: Function to call. First argument is the type of\
+          message, second is the message
         """
-        return self._error_callback
+        return self._message_callback
 
-    @property
-    def warning(self):
-        """`warning` callback executed when an warning occurs
+    def debug(self: _T, text: str) -> None:
+        """`debug` helper function for printing a debug message
 
-        Returns:
-        - `Callable[[str], bool]`: Function to call. Warning message should be specified via \
-          the parameter. If the user cancels the operation, this should return `True`
+        Args:
+        - `self` (`Callbacks`): callbacks object
+        - `text` (`str`): text to display
         """
-        return self._warning_callback
+        self.message(MessageType.DEBUG, text)
 
-    @property
-    def info(self):
-        """`info` callback executed when an info message occurs
+    def info(self: _T, text: str) -> None:
+        """`info` helper function for printing a info message
 
-        Returns:
-        - `Callable[[str], bool]`: Function to call. Info message should be specified via \
-          the parameter. If the user cancels the operation, this should return `True`
+        Args:
+        - `self` (`Callbacks`): callbacks object
+        - `text` (`str`): text to display
         """
-        return self._info_callback
+        self.message(MessageType.INFO, text)
+
+    def warning(self: _T, text: str) -> None:
+        """`warning` helper function for printing a warning message
+
+        Args:
+        - `self` (`Callbacks`): callbacks object
+        - `text` (`str`): text to display
+        """
+        self.message(MessageType.WARNING, text)
+
+    def error(self: _T, text: str) -> None:
+        """`error` helper function for printing a error message
+
+        Args:
+        - `self` (`Callbacks`): callbacks object
+        - `text` (`str`): text to display
+        """
+        self.message(MessageType.ERROR, text)
